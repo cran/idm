@@ -1,0 +1,5 @@
+export(transform_z, i_mca, i_pca, do_eig, add_svd, add_eig, update_mca, update_pca)
+import(corpcor, dummies, ggplot2, animation, ca)
+
+S3method(plot, i_mca)
+S3method(plot, i_pca)
