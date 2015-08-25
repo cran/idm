@@ -7,7 +7,7 @@ Updates a Multiple Correspondence Analysis solution
 This function updates the Multiple Correspondence Analysis (MCA) solution on the indicator matrix using the incremental method of Ross et al. (2008)
 }
 \usage{
-update_mca(mca, incdata, f = 0)
+update_mca(mca, incdata, current_rank = 2, ff = 0)
 }
 
 \arguments{
@@ -32,7 +32,8 @@ A list describing an MCA solution with components \cr
 \code{m} {Number of cases processed up to this point} \cr
 \code{orgn} {Data mean} \cr
 \code{inertia.e} {Percentages of explained (adjusted) inertia}}
-\item{f}{Number between 0 and 1 indicating the "forgetting factor" used to down-weight the contribution of earlier data blocks to the current solution. When f = 0 (default) no forgetting occurs}
+\item{current_rank}{Rank of the approximation or number of retained dimensions; default = 2}
+\item{ff}{Number between 0 and 1 indicating the "forgetting factor" used to down-weight the contribution of earlier data blocks to the current solution. When f = 0 (default) no forgetting occurs}
 }
 
 \value{
@@ -53,12 +54,12 @@ A list describing an MCA solution with components
 \item{m}{Number of cases processed up to this point} 
 \item{orgn}{Data mean} 
 \item{inertia_e}{Percentages of explained (adjusted) inertia} 
-\item{f}{Number between 0 and 1 indicating the "forgetting factor"}
+\item{ff}{Number between 0 and 1 indicating the "forgetting factor"}
 }
 
 \references{
-Ross, D. A., Lim, J., Lin, R. S., & Yang, M. H. (2008). Incremental learning for robust visual tracking. \emph{International Journal of Computer Vision}, 77(1-3), 125-141.\cr
-Iodice D' Enza, A., & Markos, A. (2014). Low-dimensional tracking of association structures in categorical data. \emph{Statistics and Computing}, (forthcoming).
+Ross, D. A., Lim, J., Lin, R. S., & Yang, M. H. (2008). Incremental learning for robust visual tracking. \emph{International Journal of Computer Vision}, 77(1-3), 125-141.\cr \cr
+Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, 25(5), 1009-1022. 
 }
 
 \seealso{

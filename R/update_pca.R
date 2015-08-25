@@ -1,20 +1,22 @@
 update_pca <- function(eg, incdata) {
-  #eg = list()
+  #This is equivalent to the PCA on the covariance (checked 23 Aug 2015)
   #data <- data.frame(lapply(data.frame(incdata), factor))
-  data = incdata
-  nrows = eg$n + nrow(data)
+  data = data.matrix(incdata)
+  nrows = eg$m + nrow(data)
   ncols = ncol(data)
   collabs = colnames(incdata)
   dims = ncols
-  PC1 = eg$vct
-  PCu1 = eg$vctCol%*%diag(eg$val) 
+  #keep these just for sign check
+  PC1 = eg$v
+  PCu1 = eg$u%*%diag(eg$d) 
   
   mat.chu = data
+  #eigenspace of the incoming block
   eg2 = do_eig(mat.chu)
- 
-  eg12 = add_eig(eg, eg2)
-  PCall = eg12$vct
-  PCuall = eg12$vctCol%*%diag(eg12$val) 
+  #add eigenspaces
+  eg = add_eig(eg, eg2)
+  PCall = eg$v
+  PCuall = eg$u%*%diag(eg$d) 
   nrows2 = nrow(mat.chu)    
   
   ## insert ctr comps
@@ -32,25 +34,24 @@ update_pca <- function(eg, incdata) {
   PCall = sign_match(PC1, PCall)
   PCuall = sign_match(PCu1, PCuall)
   
-  eg = eg12
+ # eg = eg12
   
   out = list()
-  out$vctCol =  eg$vctCol #PCuall[,c(1:dims)]  
-  out$vct =  PCall[,c(1:dims)]
+  out$u = eg$u#  PCuall[,c(1:dims)]  #eg$u #
+  out$v =  eg$v #PCall[,c(1:dims)]
   
   # PCA eigenvalues
-  sv = eg12$val#/sqrt(nrows)
-  # out$inertia_e=sv/(sum(sv))
-  out$val = sv[c(1:dims)] 
+  sv = eg$d/sqrt(nrows)
   out$inertia_e=sv/(sum(sv))
-  out$n = nrows
+  out$d = eg$d 
+  out$m = nrows
   out$rowctr=PCuall.ctr[,c(1:dims)]
-  #rownames(out$rowctr) = rowlabs
   out$rowcor=PCuall.cor[,c(1:dims)]
   out$levelnames = collabs
-  out$orgn = eg12$orgn
-  out$colpcoords = out$vct
-  out$rowpcoords = PCuall
+  out$orgn = eg$orgn
+  out$colpcoords = out$v
+  out$sv = sv
+  out$rowpcoords = PCuall 
   class(out)="i_pca"
   return(out)
 }

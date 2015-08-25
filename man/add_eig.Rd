@@ -4,7 +4,7 @@
 Adds two eigenspaces using incremental eigendecomposition
 }
 \description{
-This function adds two eigenspaces using the incremental method of Hall, Marshall & Martin (2002)
+This function adds two eigenspaces using the incremental method of Hall, Marshall & Martin (2002). The results correspond to the batch SVD of the mean-centered and concatenated data.
 }
 
 \usage{
@@ -13,26 +13,26 @@ add_eig(m1, m2)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 \item{m1}{A list describing the eigenspace of a data matrix, with components \cr
-\code{vctCol} {Left eigenvectors} \cr
-\code{vct} {Right eigenvectors} \cr
-\code{n} {Number of cases} \cr
-\code{val} {Eigenvalues} \cr
+\code{u} {Left eigenvectors} \cr
+\code{v} {Right eigenvectors} \cr
+\code{m} {Number of cases} \cr
+\code{d} {Eigenvalues} \cr
 \code{orgn} {Data mean} \cr
 }
 \item{m2}{A list describing the eigenspace of a data matrix, with components \cr
-\code{vctCol} {Left eigenvectors} \cr
-\code{vct} {Right eigenvectors} \cr
-\code{n} {Number of cases} \cr
-\code{val} {Eigenvalues} \cr
+\code{u} {Left eigenvectors} \cr
+\code{v} {Right eigenvectors} \cr
+\code{m} {Number of cases} \cr
+\code{d} {Eigenvalues} \cr
 \code{orgn} {Data mean} \cr}
 }
 
 \value{
 A list describing the eigenspace of a data matrix, with components 
-\item{vctCol}{Left eigenvectors} 
-\item{vct}{Right eigenvectors} 
-\item{n}{Number of cases} 
-\item{val}{Eigenvalues} 
+\item{u}{Left eigenvectors} 
+\item{v}{Right eigenvectors} 
+\item{m}{Number of cases} 
+\item{d}{Eigenvalues} 
 \item{orgn}{Data mean} 
 }
 
@@ -47,10 +47,12 @@ Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces 
 \examples{
 #Iris species
 data("iris", package = "datasets")
+X = iris[,-5]
 #obtain two eigenspaces
-m1 = do_eig(iris[c(1:50),-5])
-m2 = do_eig(iris[c(51:150),-5])
-#add eigenspaces
+m1 = do_eig(X[1:50,])
+m2 = do_eig(X[c(51:150),])
+#add the two eigenspaces keeping track of the data mean
 m12 = add_eig(m1, m2)
+#similar to the SVD of the mean-centered X
 }
 

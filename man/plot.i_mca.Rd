@@ -44,7 +44,7 @@ ImageMagick: \url{http://www.imagemagick.org}; GraphicsMagick: \url{http:
 \code{\link{plot.i_pca}}
 }
 \examples{
-data("women", datasets="idm")
+data("women", package="idm")
 nc = 4 # number of chunks
 ### Different approaches to incremental MCA:
 # Live case

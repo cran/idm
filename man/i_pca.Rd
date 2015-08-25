@@ -37,8 +37,8 @@ i_pca(data1, data2, nchunk = 2, disk = FALSE)
 \item{allrowcor}{A list containing the row squared correlations produced after each data chunk is analyzed; applicable only when disk = FALSE}
 }
 \references{
-Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces with eigenvalue decomposition and singular value decomposition. \emph{Image and Vision Computing}, 20(13), 1009-1016. \cr
-Iodice D' Enza, A., & Markos, A. (2014). Low-dimensional tracking of association structures in categorical data. \emph{Statistics and Computing} (forthcoming).
+Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces with eigenvalue decomposition and singular value decomposition. \emph{Image and Vision Computing}, 20(13), 1009-1016. \cr \cr
+Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, 25(5), 1009-1022. 
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -50,7 +50,8 @@ Iodice D' Enza, A., & Markos, A. (2014). Low-dimensional tracking of association
 \examples{
 #Iris Species 
 data("iris", package = "datasets")
-res_iPCA = i_pca(data1 = iris[1:50,-5], data2 = iris[51:150,-5], nchunk = c(50,50))
+X = iris[,-5]
+res_iPCA = i_pca(data1 = X[1:50,], data2 = X[51:150,], nchunk = c(50,50))
 #static plot
 plot(res_iPCA, animation = FALSE) 
 \donttest{

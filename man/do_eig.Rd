@@ -5,7 +5,7 @@
 Computes the eigenspace of a data matrix
 }
 \description{
-This function computes the eigenspace of a data matrix
+This function computes the eigenspace of a mean-centered data matrix
 }
 \usage{
 do_eig(data)
@@ -32,6 +32,7 @@ A list describing the eigenspace of a data matrix, with components
 \examples{
 #Iris species
 data("iris", package = "datasets")
-m = do_eig(iris[,-5])
+m = do_eig(iris[,-5]) 
+#corresponds to the SVD of the centered data matrix
 }
 

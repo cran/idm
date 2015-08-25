@@ -1,16 +1,4 @@
-r_live_mca <-  function(data1, data2, nchunk, f = 0,disk = TRUE) {
-  ## data1 the starting matrix; data2 the upcoming data
-  ## nchunk: number of chunks to split data2
-  ## dims: number of components to keep
-  ## f: forgetting factor
-  
-  # require("corpcor")
-  #  source("orth.r")
-  #  source("add_svd.r")
-  #  source("transform_z.r")
-  #  source("sign_match.r")
-  #  source("mat_split.r")
-  #  source("fake_row_make.r")
+r_live_mca <-  function(data1, data2, nchunk, current_rank,ff = 0,disk = TRUE) {
   
   if(disk==TRUE){
     suppressWarnings(dir.create("./PCstory"))
@@ -23,7 +11,6 @@ r_live_mca <-  function(data1, data2, nchunk, f = 0,disk = TRUE) {
     allcorU=list()
   }
   
-  f = 1 - f
   data1 <- data.frame(lapply(data.frame(data1), factor))
   data2 <- data.frame(lapply(data.frame(data2), factor))
   
@@ -53,22 +40,30 @@ r_live_mca <-  function(data1, data2, nchunk, f = 0,disk = TRUE) {
   # center first chunk and calculate eigenspace
   # m should be > k
   m <- dim(A)[1]
-  orgn <- apply(A,2,sum) / m
-  Ac <- A - t(as.matrix(orgn) %*% as.matrix(t(rep(1,m))))
-  
+  orgn <- colMeans(A)#apply(A,2,sum) / m
+#  Ac <- A - t(as.matrix(orgn) %*% as.matrix(t(rep(1,m))))
+#  Ac = A - rep(orgn, rep.int(nrow(A), ncol(A)))
+  Ac = A 
   eg <- fast.svd(Ac,0)
+#  eg <- do_eig(Ac)
   eg$m <- m
   eg$orgn <- orgn
+  eg$u = eg$u[,1:current_rank]
+  eg$d = eg$d[1:current_rank]
+  eg$v = eg$v[,1:current_rank]
   SRall <- eg$u / sqrt(r)
   #column standard coordinates
   SCall <- eg$v / sqrt(c)
   #column principal coordinates
   PC1 <- (eg$v / sqrt(c)) %*% diag(as.vector((eg$d)))
-  #  signPC1 = sign(PC1)
+  #signPC1 = sign(PC1)
   # row principal coordinates
   PCu1 = (eg$u / sqrt(r)) %*% diag(as.vector((eg$d)))
-  #fixed 24-05-15
-  dims = dim(eg$v)[2] 
+  if (missing("current_rank")) {
+    #set rank equal to categories - variables
+    current_rank = dim(eg$v)[2] 
+  }
+  dims = current_rank
   
   if ((length(nchunk) > 1 ) & (sum(nchunk) != nrow(data2))) {
     stop("\n The overall size of given 'nchunk' blocks does not match the size of 'data2'")
@@ -150,17 +145,14 @@ r_live_mca <-  function(data1, data2, nchunk, f = 0,disk = TRUE) {
     n12= n1 + n2
     c12 = (c*n1 + c2*n2)/n12
     r12 = rep(1/n12,n12)
-    eg = add_svd(eg$u, eg$d, eg$v, sZ2, eg$m, eg$orgn, f, current_rank)
+#   sZ2 = sZ2 - rep(eg$orgn, rep.int(nrow(sZ2), ncol(sZ2)))
+#   eg = add_svd(eg,sZ2,eg$m,current_rank,eg$orgn,ff)
+    eg = add_svd(eg,sZ2,eg$m,current_rank)
+#  eg = add_svd_ross(eg$u, eg$d, eg$v, sZ2, eg$m, eg$orgn, f, current_rank)
+ #   eg = add_svd(eg$u, eg$d, eg$v, sZ2, eg$m, eg$orgn, f, current_rank)
 #    eg2 = do_eig(sZ2)
-#    eg$vctCol = eg$u
-#    eg$vct = eg$v
-#    eg$val = eg$d
-#    eg$n = eg$m
 #    eg = add_eig(eg,eg2)
-#   eg$u = eg$vctCol 
-#   eg$v =eg$vct 
-#   eg$d = eg$val 
-#   eg$m = eg$n 
+
    ### coordinate computation
     ## column computation (modalities)
     if (q > 1) {
@@ -170,8 +162,6 @@ r_live_mca <-  function(data1, data2, nchunk, f = 0,disk = TRUE) {
       #######################
     }
     
-    # row standard / principal coordinates
-    
     #update column standard coordinates
     SCall <- (eg$v / sqrt(c12))
     #update column principal coordinates
@@ -180,7 +170,7 @@ r_live_mca <-  function(data1, data2, nchunk, f = 0,disk = TRUE) {
     SRall <- (eg$u / sqrt(r12))
     #update row principal coordinates
     PCuall <- (eg$u / sqrt(r12)) %*% diag(as.vector((eg$d)))
-    # PCuall <- Z %*% as.matrix(SCall) * Q^(-1)
+   #  PCuall <- Z %*% as.matrix(SCall) * Q^(-1)
     
     n1 = n12
     c = c12
@@ -227,13 +217,13 @@ r_live_mca <-  function(data1, data2, nchunk, f = 0,disk = TRUE) {
   J = length(eg$d)
   #get (almost) same eigenvalues with exact
   dd = eg$d/sqrt(nchunk+1)
-  inertia0 = dd[1:(J-Q)]^4
+  inertia0 = dd[1:current_rank]^4
   alldim <- sum(sqrt(inertia0) >= 1/Q)
   inertia.adj <- ((Q/(Q-1))^2 * (sqrt(inertia0)[1:alldim] - 1/Q)^2)
   inertia.t <- (Q/(Q-1)) * (sum(inertia0) - ((J - Q) / Q^2))
   
   out = list()
-  out$colpcoordStart = PC1[,c(1:dims)]/sqrt(nchunk+1)
+  out$colpcoordStart = PC1[,c(1:dims)]
   out$colpcoord = PCall[,c(1:dims)]/sqrt(nchunk+1)
   out$rowpcoordStart = PCu1[,c(1:dims)]
   out$rowcoord = SRall[,c(1:dims)]/sqrt(nchunk+1)
@@ -244,7 +234,7 @@ r_live_mca <-  function(data1, data2, nchunk, f = 0,disk = TRUE) {
   out$colcor=PCall.cor[,c(1:dims)]
   out$rowctr=PCuall.ctr[,c(1:dims)]
   out$rowcor=PCuall.cor[,c(1:dims)]
-  out$sv=eg$d[c(1:(J-Q))]
+  out$sv=eg$d
   #out$inertia_e=(eg$d[c(1:alldim)])^2/inertia_t
   out$inertia_e <- inertia.adj / inertia.t
   
@@ -259,9 +249,9 @@ r_live_mca <-  function(data1, data2, nchunk, f = 0,disk = TRUE) {
   
   out$rowmass = r
   out$colmass = c
+  out$f = ff
   out$nchunk = nchunk
   out$disk = disk
-  out$f = 1-f
   out
   
 }   

@@ -16,32 +16,32 @@ Matrix of incoming data
 }
 \item{eg}{
 A list describing the eigenspace of a data matrix, with components \cr
-\code{vctCol} {Left eigenvectors} \cr
-\code{vct} {Right eigenvectors} \cr
-\code{n} {Number of cases} \cr
-\code{val} {Eigenvalues} \cr
+\code{u} {Left eigenvectors} \cr
+\code{v} {Right eigenvectors} \cr
+\code{m} {Number of cases} \cr
+\code{d} {Eigenvalues} \cr
 \code{orgn} {Data mean}
 }
 }
 
 \value{
 A list describing the eigenspace of a data matrix and a PCA solution, with components 
-\item{vctCol}{Left eigenvectors} 
-\item{vct}{Right eigenvectors} 
-\item{n}{Number of cases} 
-\item{val}{Eigenvalues}
+\item{u}{Left eigenvectors} 
+\item{v}{Right eigenvectors} 
+\item{m}{Number of cases} 
+\item{d}{Eigenvalues}
 \item{orgn}{Data mean}
 \item{colpcoord}{Variable loadings}     
 \item{rowpcoord}{Row scores on the principal components}     
 \item{levelnames}{Column names}
 \item{rowctr}{Row contributions}
 \item{rowcor}{Row squared correlations}
-\item{sv}{Eigenvalues}
+\item{sv}{Standard deviations of the principal components}
 \item{inertia_e}{Percentages of explained variance}
 }
 \references{
-Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces with eigenvalue decomposition and singular value decomposition. \emph{Image and Vision Computing}, 20(13), 1009-1016. \cr
-Iodice D' Enza, A., & Markos, A. (2014). Low-dimensional tracking of association structures in categorical data. \emph{Statistics and Computing} (forthcoming).
+Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces with eigenvalue decomposition and singular value decomposition. \emph{Image and Vision Computing}, 20(13), 1009-1016. \cr \cr
+Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, 25(5), 1009-1022. 
 }
 
 \seealso{
@@ -49,12 +49,13 @@ Iodice D' Enza, A., & Markos, A. (2014). Low-dimensional tracking of association
 }
 
 \examples{
+
 data(iris, package="datasets")
 dat = iris[,-5]
 eg = do_eig(dat[1:50,-5])
 aa = seq(50,150,50)
 for (k in c(1:2)) {
   eg = update_pca(eg, dat[c((aa[k]+1):aa[k+1]),])
-  }
+  } #similar results to princomp(iris[,-5])
 plot(eg, animation = FALSE)  
 }

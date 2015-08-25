@@ -35,8 +35,8 @@ if ((length(nchunk) > 1 ) & (sum(nchunk) != nrow(data2))) {
 
 
 eg1 = do_eig(data1)
-PC1 = eg1$vct
-PCu1 = eg1$vctCol%*%diag(eg1$val) 
+PC1 = eg1$v
+PCu1 = eg1$u%*%diag(eg1$d) 
 
 ## insert ctr comps
 signe = 2*(PCu1>0)-1
@@ -96,10 +96,9 @@ for (q in 1:length(mat.story)) {
   
   eg2 = do_eig(mat.chu)
   eg12 = add_eig(eg1, eg2)
-  PCall = eg12$vct
-  PCuall = eg12$vctCol%*%diag(eg12$val) 
+  PCall = eg12$v
+  PCuall = eg12$u%*%diag(eg12$d) 
   nrows2 = nrow(mat.chu)    
-  
   ## insert ctr comps
   signe = 2*(PCuall>0)-1
   PCuall2 = PCuall^2
@@ -149,7 +148,7 @@ out$rowpcoords =  PCuall[,c(1:dims)]
 out$colpcoords =  PCall[,c(1:dims)]
 
 # PCA eigenvalues
-sv = eg12$val/sqrt(nrows)
+sv = eg12$d/sqrt(nrows)
 out$inertia_e=sv/(sum(sv))
 out$sv = sv[c(1:dims)] 
 out$levelnames = collabs

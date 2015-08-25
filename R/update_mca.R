@@ -1,32 +1,29 @@
-update_mca <-  function(mca, incdata, f = 0) {
+update_mca <-  function(mca, incdata, current_rank = 2, ff = 0) {
   eg = list()
-  f = 1 - f
+  f = 1 - ff
   data <- data.frame(lapply(data.frame(incdata), factor))
   
   mods1 = apply(data, 2, unique)
   if(is.null(dim(mods1))== FALSE){
     mods1=split(t(mods1),colnames(mods1))
   }    
-  
-  
   Q = ncol(incdata)
-  #m = mca$m
-  n1 = mca$m #nrow(Z)
+  n1 = mca$m 
   labs = mca$levelnames
   r = mca$rowmass
   c = mca$colmass
   n.mods1 = mca$levels.n
   J = ncol(mca$indmat)
   eg$orgn = mca$orgn
-  SRall = mca$rowcoord
-  SCall = mca$colcoord
+  SRall = mca$rowcoord[,1:current_rank]
+  SCall = mca$colcoord[,1:current_rank]
   
   eg$m = n1
   eg$u = SRall * sqrt(r)
   eg$v = SCall * sqrt(c)
   eg$d = mca$sv
-  dims=dim(eg$v)[2]
-  current_rank = dim(eg$v)[2]  ## This is J-Q
+  
+  dims = current_rank
   mat.chu = data 
   n.chu = nrow(mat.chu)
   
@@ -49,25 +46,16 @@ update_mca <-  function(mca, incdata, f = 0) {
     sZ2 = tZ2$SZ[1:n.chu, ]
     c2 = tZ2$c
   }
+  #center sZ2!!
+ # sZ2 = sZ2 - rep(eg$orgn, rep.int(nrow(sZ2), ncol(sZ2)))
   ###### END OF THE NEW CODE ########################
   n2 = n.chu
   n12= n1 + n2
   c12 = (c*n1 + c2*n2)/n12
   r12 = rep(1/n12,n12)
-  eg = add_svd(eg$u, eg$d, eg$v, sZ2, eg$m, eg$orgn,f, current_rank)
-  #  eg2 = do_eig(sZ2)
-  #  eg$vctCol = eg$u
-  #  eg$vct = eg$v
-  #  eg$val = eg$d
-  #  eg$n = eg$m
-  #  eg = add_eig(eg,eg2)
-  #  eg$u = eg$vctCol 
-  #  eg$v =eg$vct 
-  #  eg$d = eg$val 
-  #  eg$m = eg$n 
+ # eg = add_svd(eg,sZ2,eg$m,current_rank,eg$orgn,ff)
+  eg = add_svd(eg,sZ2,eg$m,current_rank)
   #update column standard coordinates
-  # eg$d = eg$d/sqrt(2)
-  #eg$v = sqrt(eg$v^2/2)
   SCall <- (eg$v / sqrt(c12))
   #update column principal coordinates
   PCall <- SCall %*% diag(as.vector((eg$d[1:current_rank])))
@@ -79,9 +67,8 @@ update_mca <-  function(mca, incdata, f = 0) {
   n1 = n12
   c = c12
   r = r12
-  
-  PCall = sign_match(mca$colpcoord, PCall[,1:current_rank])
-  PCuall = sign_match(mca$rowpcoord, PCuall[,1:current_rank])
+  PCall = sign_match(SRall, PCall[,1:current_rank])
+  PCuall = sign_match(SCall, PCuall[,1:current_rank])
   
   PCall.ctr=eg$v^2
   PCall.cor=(PCall^2)/apply(PCall^2,1,sum)
@@ -92,7 +79,7 @@ update_mca <-  function(mca, incdata, f = 0) {
   J = length(eg$d)
   #get (almost) same eigenvalues with exact
   dd = eg$d # sqrt(eg$d^2/2)
-  inertia0 = dd[1:(J-Q)]^4
+  inertia0 = dd[1:current_rank]^4
   alldim <- sum(sqrt(inertia0) >= 1/Q)
   inertia.adj  <- ((Q/(Q-1))^2 * (sqrt(inertia0)[1:alldim] - 1/Q)^2)
   inertia.t    <- (Q/(Q-1)) * (sum(inertia0) - ((J - Q) / Q^2))
