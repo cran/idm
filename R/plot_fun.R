@@ -16,7 +16,7 @@ plot_fun<-function(outmo,chu,i,xr,yr,lab,att=TRUE,pca=TRUE,contrib){
       a=ggplot(data=df,aes(x=x,y=y))#+xlim(xr)+ylim(yr)
       
       a=a+geom_text(data=df,aes(label=lab))+ xlab("")+ylab("") #,size=ctr
-      a=a+geom_point(data=cdf,aes(x=x,y=y),size=.5)
+      a=a+geom_point(data=cdf,aes(x=x,y=y),size=.05)
       a=a+geom_segment(data=df,aes(x=0,xend=x,y=0,yend=y),size=.5,alpha=.75)
     }else{
       df=data.frame(x=outmo[[chu]]$dat$Xs[i,],y=outmo[[chu]]$dat$Ys[i,],ctr=outmo[[chu]]$bfcolctr[i,],

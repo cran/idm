@@ -1,11 +1,6 @@
 plot.i_pca<-function(x,dims=c(1,2),what=c(TRUE,TRUE),dataname=NULL,
                      labels=NULL, animation=TRUE,frames=10,zoom=TRUE, ...){
   
-#  require(animation)
-#  source("static_plot.R")
-#  source("all_frame_make.R")
-#  source("ani_plot.R")
-  
   obj <- x
   #default dataname
   if (is.null(dataname)){
@@ -35,6 +30,6 @@ plot.i_pca<-function(x,dims=c(1,2),what=c(TRUE,TRUE),dataname=NULL,
     stpl=static_plot(obj,dims=dims,what=what,labs=labels,pca=TRUE)
     return(stpl)
   }
-
-
+  
+  
 }

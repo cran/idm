@@ -58,7 +58,7 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
     stop("\n The overall size of given 'nchunk' blocks does not match the size of 'data2'")
   }
   
-  eg1 = do_eig(sZ1)
+  eg1 = do_es(sZ1)
   r1 = r[1:n1]
   PC1 = t(t(eg1$v / sqrt(c)) * as.vector((eg1$d)))
   PCu1 = t(t(eg1$u / sqrt(r1)) * as.vector((eg1$d)))
@@ -127,8 +127,8 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
     }
     
     n2 = n.chu
-    eg2 = do_eig(sZ2)
-    eg12 = add_eig(eg1, eg2)
+    eg2 = do_es(sZ2)
+    eg12 = add_es(eg1, eg2,method="esm")
     
     if (q > 1) {
       #######################
@@ -184,18 +184,19 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
     }
     
   }
+
   #calculates adjusted inertia
   J = length(eg12$d)
   inertia0 = eg12$d[1:(J-Q)]^4
   alldim <- sum(sqrt(inertia0) >= 1/Q)
   inertia.adj  <- ((Q/(Q-1))^2 * (sqrt(inertia0)[1:alldim] - 1/Q)^2)
   inertia.t    <- (Q/(Q-1)) * (sum(inertia0) - ((J - Q) / Q^2))
-  
+    
   out = list()
-  out$colpcoordStart = PC1[,c(1:dims)]
+#  out$colpcoordStart = PC1[,c(1:dims)]
   out$colcoord = SCall[,c(1:dims)]
   out$colpcoord = PCall[,c(1:dims)]
-  out$rowpcoordStart = PCu1[,c(1:dims)]
+ # out$rowpcoordStart = PCu1[,c(1:dims)]
   out$rowcoord = SRall[,c(1:dims)]
   out$rowpcoord = PCuall[,c(1:dims)]
   out$levelnames = labs 
@@ -220,6 +221,6 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
   # out$sZ1 = sZ1
   out$nchunk = nchunk
   out$disk = disk
-  out$f = 0
+  out$ff = 0
   out
 }

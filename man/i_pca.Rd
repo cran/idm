@@ -10,25 +10,28 @@ This function computes the Principal Component Analysis (PCA) solution on the co
 i_pca(data1, data2, nchunk = 2, disk = FALSE)
 }
 \arguments{
-  \item{data1}{Matrix or data frame of starting data}
-  \item{data2}{Matrix or data frame of incoming data}
+  \item{data1}{Matrix or data frame of starting data, or full data if data2 = NULL}
+  \item{data2}{Matrix or data frame of incoming data; omitted when full data is given in data1}
   \item{nchunk}{Number of incoming data chunks (equal splits of 'data2') or a Vector with the row size of each incoming data chunk}
 \item{disk}{Logical indicating whether then output is saved to hard disk}
 }
 
 \value{
-\item{scoreStart}{Row scores on the principal components of the starting solution} 
-\item{loadStart}{Variable loadings of the starting solution}
-\item{colpcoordStart}{Variable loadings of the starting data}
-\item{colpcoord}{Variable loadings of the final solution}     
-\item{rowpcoordStart}{Row scores on the principal components of the starting data}
-\item{rowpcoord}{Row scores on the principal components of the final solution}     
-\item{levelnames}{Column names}
-\item{rownames}{Row names}
-\item{rowctr}{Row contributions}
-\item{rowcor}{Row squared correlations}
-\item{sv}{Eigenvalues}
+\item{rowpcoord}{Row scores on the principal components}     
+\item{colpcoord}{Variable loadings}     
+\item{eg}{A list describing the eigenspace of a data matrix, with components \cr
+\code{u} {Left eigenvectors} \cr
+\code{v} {Right eigenvectors} \cr
+\code{m} {Number of cases} \cr
+\code{d} {Eigenvalues} \cr
+\code{orgn} {Data mean} \cr}
 \item{inertia_e}{Percentage of explained variance}
+\item{sv}{Singular values}
+\item{levelnames}{Column labels}
+\item{rowctr}{Row contributions}
+\item{colctr}{Column contributions}
+\item{rowcor}{Row squared correlations}
+\item{colcor}{Column squared correlations}
 \item{nchunk}{Number of incoming data chunks}
 \item{disk}{Logical indicating whether the output is saved to hard disk}
 \item{allrowcoords}{A list containing the row scores on the principal components produced after each data chunk is analyzed; applicable only when disk = FALSE}
@@ -37,20 +40,20 @@ i_pca(data1, data2, nchunk = 2, disk = FALSE)
 \item{allrowcor}{A list containing the row squared correlations produced after each data chunk is analyzed; applicable only when disk = FALSE}
 }
 \references{
-Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces with eigenvalue decomposition and singular value decomposition. \emph{Image and Vision Computing}, 20(13), 1009-1016. \cr \cr
-Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, 25(5), 1009-1022. 
+Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces with eigenvalue decomposition and singular value decomposition. \emph{Image and Vision Computing}, \emph{20}(13), 1009-1016. \cr \cr
+Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, \emph{25}(5), 1009-1022. 
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{update_pca}}, \code{\link{i_mca}}, \code{\link{update_mca}}, \code{\link{add_svd}}, \code{\link{add_eig}}
+\code{\link{update.i_pca}}, \code{\link{i_mca}}, \code{\link{update.i_mca}}, \code{\link{add_es}}
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
 #Iris Species 
 data("iris", package = "datasets")
-X = iris[,-5]
+X = scale(iris[,-5])
 res_iPCA = i_pca(data1 = X[1:50,], data2 = X[51:150,], nchunk = c(50,50))
 #static plot
 plot(res_iPCA, animation = FALSE) 
@@ -73,4 +76,3 @@ res_iPCA = i_pca(data1 = EuStockMarkets[1:50,], data2 = EuStockMarkets[51:1860,]
 plot(res_iPCA, animation = TRUE, frames = 10)
 }
 }
-

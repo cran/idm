@@ -25,7 +25,7 @@ static_plot<-function(obj,dims=c(1,2),what=c(TRUE,TRUE),labs,pca=FALSE,contrib){
       {
         a=a+geom_text(data=attdf,aes(label=labs,size=ctr))+ xlab("")+ylab("")#+ theme(legend.position="none")
       }
-      if (obj$f == 0) {
+      if (obj$ff == 0) {
         a=a+xlab(paste(round(obj$inertia_e[d1]*100,digits=2),"%",sep=""))
         a=a+ylab(paste(round(obj$inertia_e[d2]*100,digits=2),"%",sep=""))
       }
@@ -38,7 +38,7 @@ static_plot<-function(obj,dims=c(1,2),what=c(TRUE,TRUE),labs,pca=FALSE,contrib){
       obsdf=data.frame(x=as.vector(obj$rowpcoord[,d1]),y=as.vector(obj$rowpcoord[,d2]),ctr=obj$rowctr[,d1],cor=obj$rowcor[,d1],mass=obj$rowmass)
       b=ggplot(data=obsdf,aes(x=x,y=y))
       b=b+geom_point(size=.5)+ xlab("")+ylab("")
-      if (obj$f == 0) { 
+      if (obj$ff == 0) { 
         b=b+xlab(paste(round(obj$inertia_e[d1]*100,digits=2),"%",sep=""))
         b=b+ylab(paste(round(obj$inertia_e[d2]*100,digits=2),"%",sep=""))
       }
@@ -49,7 +49,7 @@ static_plot<-function(obj,dims=c(1,2),what=c(TRUE,TRUE),labs,pca=FALSE,contrib){
     if ((what[1] == TRUE) & (what[2] == TRUE)) {
       
       c=a+geom_point(data=obsdf,aes(x=x,y=y),colour="red",size=.5)+ylab("")
-      if (obj$f == 0) {
+      if (obj$ff == 0) {
         c=c+xlab(paste(round(obj$inertia_e[d1]*100,digits=2),"%",sep=""))
         c=c+ylab(paste(round(obj$inertia_e[d2]*100,digits=2),"%",sep=""))
       }
@@ -68,7 +68,7 @@ static_plot<-function(obj,dims=c(1,2),what=c(TRUE,TRUE),labs,pca=FALSE,contrib){
       cdf=circle_fun()
       a=ggplot(data=attdf,aes(x=x,y=y))
       a=a+geom_text(data=attdf,aes(label=labs))+ xlab("")+ylab("") #,size=ctr
-      a=a+geom_point(data=cdf,aes(x=x,y=y),size=.5)
+      a=a+geom_point(data=cdf,aes(x=x,y=y),size=.05)
       a=a+geom_segment(data=attdf,aes(x=0,xend=x,y=0,yend=y),size=.5,alpha=.75)
       a=a+xlab(paste(round(obj$inertia_e[d1]*100,digits=2),"%",sep=""))
       a=a+ylab(paste(round(obj$inertia_e[d2]*100,digits=2),"%",sep=""))

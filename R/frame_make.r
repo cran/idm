@@ -44,17 +44,11 @@ frame_make<-function(nfrs,dims=c(1,2),stepfra=1,disk=TRUE,obj=NULL,is.PCA=TRUE){
     srowcor=read.table(snam.rowcor,row.names=NULL)[,-1]
     erowcor=read.table(enam.rowcor,row.names=NULL)[,-1]
     
-    #  srowctr=read.table(snam.nrowctr,row.names=NULL)[,c(a+1,b+1)]
-    #  erowctr=read.table(enam.nrowctr,row.names=NULL)[,c(a+1,b+1)]
-    
-    #  srowcor=read.table(snam.rowcor,row.names=NULL)[,c(a+1,b+1)]
-    #  erowcor=read.table(enam.rowcor,row.names=NULL)[,c(a+1,b+1)]
-    
   }else{
-    dat1=obj$allcolcoords[[stepfra]]
-    dat2=obj$allcolcoords[[stepfra+1]]
-    udat1=obj$allrowcoords[[stepfra]]
-    udat2=obj$allrowcoords[[stepfra+1]]
+    dat1=obj$allcolcoord[[stepfra]]
+    dat2=obj$allcolcoord[[stepfra+1]]
+    udat1=obj$allrowcoord[[stepfra]]
+    udat2=obj$allrowcoord[[stepfra+1]]
     newrow=nrow(udat2)-nrow(udat1)
     nudat=matrix(0,newrow,ncol(dat1))
     udat1=rbind(udat1,nudat)

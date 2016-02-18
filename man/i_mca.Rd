@@ -7,37 +7,37 @@ Incremental Multiple Correspondence Analysis (MCA)
 This function computes the Multiple Correspondence Analysis (MCA) solution on the indicator matrix using two incremental methods described in Iodice D'Enza & Markos (2015)
 }
 \usage{
-i_mca(data1, data2, method=c("exact","live"), nchunk = 2, 
-current_rank = 2, ff = 0, disk=FALSE)
+i_mca(data1, data2, method=c("exact","live"), nchunk = 2, current_rank, ff = 0, 
+disk=FALSE)
 }
 \arguments{
-  \item{data1}{A numeric matrix or data frame of starting data}
-  \item{data2}{A numeric matrix or data frame of incoming data}
+  \item{data1}{Matrix or data frame of starting data or full data if data2 = NULL}
+  \item{data2}{Matrix or data frame of incoming data}
   \item{method}{String specifying the type of implementation: "exact" or "live". "exact" refers to the case when all the data is available from the start and dimension reduction is based on the method of Hall et al. (2002). "live" refers to the case when new data comes in as data flows and dimension reduction is based on the method of Ross et al. (2008). The main difference between the two approaches lies in the calculation of the column margins of the input matrix. For the "exact" approach, the analysis is based on the "global" margins, that is, the margins of the whole indicator matrix, which is available in advance. For the "live" approach, the whole matrix is unknown and the global margins are approximated by  the "local" margins, that is, the average margins of the data analysed insofar. A detailed description of the two implementations is provided in Iodice D' Enza & Markos (2015).}
   \item{nchunk}{Number of incoming data chunks (equal splits of 'data2') or a Vector with the row size of each incoming data chunk}
-  \item{current_rank}{Rank of the approximation or number of retained dimensions (default = 2)}
+  \item{current_rank}{Rank of approximation; if empty then full rank is used}
   \item{ff}{Number between 0 and 1 indicating the "forgetting factor" used to down-weight the contribution of earlier data blocks to the current solution. When ff = 0 (default) no forgetting occurs; applicable only when method ="live"}
   \item{disk}{Logical indicating whether then output is saved to hard disk}
 }
 
 \value{
-\item{colpcoordStart}{Column principal coordinates of the starting solution} 
-\item{colpcoord}{Column principal coordinates of the final solution}
-\item{rowpcoordStart}{Row principal coordinates of the starting data}
-\item{rowpcoord}{Row principal coordinates of the final solution}     
-\item{levelnames}{Column names}
+\item{rowpcoord}{Row principal coordinates}     
+\item{colpcoord}{Column principal coordinates}
+\item{rowcoord}{Row standard coordinates}     
+\item{colcoord}{Column standard coordinates}
+\item{levelnames}{Column labels}
 \item{colctr}{Column contributions} 
 \item{colcor}{Column squared correlations}
 \item{rowctr}{Row contributions}
 \item{rowcor}{Row squared correlations}
-\item{sv}{Eigenvalues}
+\item{sv}{Singular values}
 \item{rowmass}{Row masses}
 \item{colmass}{Column masses}  
-\item{inertia.e}{Percentages of explained (adjusted) inertia}
+\item{inertia_e}{Percentages of explained (adjusted) inertia}
 \item{nchunk}{Number of incoming data chunks}
 \item{disk}{Logical indicating whether then output is saved to hard disk}
 \item{allrowcoords}{A list containing the row scores on the principal components produced after each data chunk is analyzed; applicable only when disk = FALSE}
- \item{ff}{Number between 0 and 1 indicating the "forgetting factor" used to down-weight the contribution of earlier data blocks to the current solution}
+ \item{ff}{Number between 0 and 1 indicating the "forgetting factor" used to down-weight the contribution of earlier data blocks to the current solution; applicable only when method = "live"}
 \item{allcolcoords}{A list containing the variable loadings on the principal components produced after each data chunk is analyzed; applicable only when disk = FALSE}
 \item{allcolctr}{A list containing the column contributions after each data chunk is 
 analyzed; applicable only when disk = FALSE}
@@ -47,14 +47,13 @@ analyzed; applicable only when disk = FALSE}
 \item{allrowcor}{A list containing the row squared correlations produced after each data chunk is analyzed; applicable only when disk = FALSE}
 }
 \references{
-Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces with eigenvalue decomposition and singular value decomposition. \emph{Image and Vision Computing}, 20(13), 1009-1016.\cr \cr
-Ross, D. A., Lim, J., Lin, R. S., & Yang, M. H. (2008). Incremental learning for robust visual tracking. \emph{International Journal of Computer Vision}, 77(1-3), 125-141.\cr \cr
-Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, 25(5), 1009-1022. 
+Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces with eigenvalue decomposition and singular value decomposition. \emph{Image and Vision Computing}, \emph{20}(13), 1009-1016.\cr \cr
+Ross, D. A., Lim, J., Lin, R. S., & Yang, M. H. (2008). Incremental learning for robust visual tracking. \emph{International Journal of Computer Vision}, \emph{77}(1-3), 125-141.\cr \cr
+Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, \emph{25}(5), 1009-1022. 
 }
 
 \seealso{
-\code{\link{update_mca}}, \code{\link{i_pca}}, \code{\link{update_pca}}, \code{\link{add_svd}}, \code{\link{add_eig}}
-}
+\code{\link{update.i_mca}}, \code{\link{i_pca}}, \code{\link{update.i_pca}}, \code{\link{add_es}}}
 
 \examples{
 ##Example 1 - Exact case

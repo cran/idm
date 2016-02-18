@@ -1,4 +1,4 @@
-do_eig <- function(data) {
+do_es <- function(data) {
  # require("corpcor")
   # data: data matrix
   out = list()
@@ -23,9 +23,11 @@ do_eig <- function(data) {
   #     #  out = list()
   #       out$cov = cov.data
   #     } else {
-  #       
+  #    
+  
   cen.mat = data - (orgn) %*% (oner)
-  svd.res = fast.svd(cen.mat)
+  # print(t(cen.mat[1:5,1:6]))
+  svd.res = svd(cen.mat)
   u = svd.res$u
   d = svd.res$d
   v = svd.res$v

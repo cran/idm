@@ -20,7 +20,6 @@ ani_plot <- function(outmo,nfrs=25,moname="mymovie.gif",labs,att=TRUE,pca=TRUE,c
           plot_fun(outmo,chu,i,xr,yr,lab=labs,att=att,pca=pca,contrib=contrib)
           animation::ani.pause()})
       }else{
-        
         lapply(seq(1,nfrs, by = 1), function(i) {
           plot_fun(outmo,chu,i,xyr[[chu]]$xr[i,],xyr[[chu]]$yr[i,],lab=labs,att=att,pca=pca,contrib=contrib)
           animation::ani.pause()})
@@ -30,7 +29,8 @@ ani_plot <- function(outmo,nfrs=25,moname="mymovie.gif",labs,att=TRUE,pca=TRUE,c
   } 
   
   if (file.exists(moname)) file.remove(moname)
-  saveGIF(FUN2(nfrs,outmo$nchunk,xr,yr,contrib), interval = 0.1,movie.name=moname)
+ # saveGIF(FUN2(nfrs,outmo$nchunk,xr,yr,contrib), interval = 0.1,movie.name=moname)
+  saveLatex(FUN2(nfrs,outmo$nchunk,xr,yr,contrib), interval = 0.1,movie.name=moname)
 }
 
 

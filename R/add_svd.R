@@ -1,13 +1,14 @@
 add_svd <- function(eg,B,m,current_rank,orgn,ff = 0) {
   out = list()
   #new data block
-  B = data.matrix(B)
+  B = data.matrix(B) 
   #columns (fixed)
   c = dim(B)[2]
   #num of new rows
   n = dim(B)[1]
   if (missing("current_rank")) {
     #full rank
+    print(current_rank)
     current_rank = c
   }
   #for convenience
@@ -25,9 +26,9 @@ add_svd <- function(eg,B,m,current_rank,orgn,ff = 0) {
     orgnb = colMeans(B) 
     #center data
     Bc = B - rep(orgnb, rep.int(nrow(B), ncol(B)))
-  #  print(head(Bc))
-  #  Bc <- B - t(as.matrix(orgnb) %*% as.matrix(t(rep(1,n))))
-#    print(head(Bc))
+    #  print(head(Bc))
+    #  Bc <- B - t(as.matrix(orgnb) %*% as.matrix(t(rep(1,n))))
+    #    print(head(Bc))
     #account for the variance of the mean
     Bc <- rbind(Bc,t(sqrt((n*m)/(n+m))*as.matrix((orgnb-orgn))))
     orgnc <- (ff*m*orgn + n*orgnb)/(n+ff*m)
@@ -55,13 +56,26 @@ add_svd <- function(eg,B,m,current_rank,orgn,ff = 0) {
   #update number of columns m processed so far
   m <- m + n
   #but the correct is 
-#  m <- ff*m + n
+  #  m <- ff*m + n
+  
+  #after thousands of updates you may need this to preserve orthogonality
+  #URQ = qr(Uk)
+  #UQ = qr.Q(URQ)
+  #UR = qr.R(URQ)
+  #VRQ= qr(Vk)
+  #VQ = qr.Q(VRQ)
+  #VR = qr.R(VRQ)
+  #egk <- fast.svd(UR %*% diag(Sk) %*% t(VR))
+  #Up = UQ %*% egk$u
+  #Vp = VQ %*% egk$v
+  #Sk = egk$d
   
   #output
   out$u <- Uk
   out$d <- Sk
   out$v <- Vk
   out$m <- m 
+  
   
   out
   

@@ -1,7 +1,9 @@
-export(transform_z, i_mca, i_pca, do_eig, add_svd, add_eig, update_mca, update_pca)
+export(transform_z, i_mca, i_pca, do_es, add_es)
 import(corpcor, dummies, ggplot2, animation, ca)
 importFrom("stats", "cor", "lm")
 importFrom("utils", "read.table", "write.table")
 
 S3method(plot, i_mca)
 S3method(plot, i_pca)
+S3method(update, i_mca)
+S3method(update, i_pca)
