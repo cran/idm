@@ -43,7 +43,8 @@ update.i_pca <- function(object, incdata, ...) {
   
   # PCA eigenvalues
   sv = eg$d/sqrt(nrows)
-  out$inertia_e=sv/(sum(sv))
+  out$inertia_e=sv/(sum(sv)^2)
+  
 #  out$d = eg$d 
   #  out$eg=eg
   out$m = nrows

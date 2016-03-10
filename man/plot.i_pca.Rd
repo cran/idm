@@ -34,7 +34,8 @@ The function \code{plot.i_pca} makes a two-dimensional map of the object created
 \examples{
 data("iris", package = "datasets")
 #Iris species
-res_iPCA = i_pca(data1 = iris[1:50,-5], data2 = iris[51:150,-5], nchunk = c(50,50))
+X = scale(iris[,-5])
+res_iPCA = i_pca(data1 = X[1:50,-5], data2 = X[51:150,-5], nchunk = c(50,50))
 #static plot, final solution
 plot(res_iPCA, animation = FALSE)
 \donttest{

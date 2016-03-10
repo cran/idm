@@ -54,7 +54,7 @@ Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association
 #Iris Species 
 data("iris", package = "datasets")
 X = scale(iris[,-5])
-res_iPCA = i_pca(data1 = X[1:50,], data2 = X[51:150,], nchunk = c(50,50))
+res_iPCA = i_pca(data1 = X[1:50,], data2 = X[51:150,], nchunk = 2)
 #static plot
 plot(res_iPCA, animation = FALSE) 
 \donttest{

@@ -1,4 +1,4 @@
-export(transform_z, i_mca, i_pca, do_es, add_es)
+export(i_mca, i_pca, do_es, add_es)
 import(corpcor, dummies, ggplot2, animation, ca)
 importFrom("stats", "cor", "lm")
 importFrom("utils", "read.table", "write.table")
