@@ -25,19 +25,21 @@ i_pca(data1, data2, nchunk = 2, disk = FALSE)
 \code{m} {Number of cases} \cr
 \code{d} {Eigenvalues} \cr
 \code{orgn} {Data mean} \cr}
-\item{inertia_e}{Percentage of explained variance}
 \item{sv}{Singular values}
-\item{levelnames}{Column labels}
+\item{inertia_e}{Percentage of explained variance}
+\item{levelnames}{Attribute labels}
 \item{rowctr}{Row contributions}
 \item{colctr}{Column contributions}
 \item{rowcor}{Row squared correlations}
 \item{colcor}{Column squared correlations}
-\item{nchunk}{Number of incoming data chunks}
-\item{disk}{Logical indicating whether the output is saved to hard disk}
-\item{allrowcoords}{A list containing the row scores on the principal components produced after each data chunk is analyzed; applicable only when disk = FALSE}
-\item{allcolcoords}{A list containing the variable loadings on the principal components produced after each data chunk is analyzed; applicable only when disk = FALSE}
-\item{allrowctr}{A list containing the row contributions after each data chunk is analyzed; applicable only when disk = FALSE}
-\item{allrowcor}{A list containing the row squared correlations produced after each data chunk is analyzed; applicable only when disk = FALSE}
+\item{nchunk}{A copy of \code{nchunk} in the return object}
+\item{disk}{A copy of \code{disk} in the return object}
+\item{allrowcoord}{A list containing the row scores on the principal components produced after each data chunk is analyzed; returned only when \code{disk = FALSE}}
+\item{allcolcoord}{A list containing the variable loadings on the principal components produced after each data chunk is analyzed; returned only when \code{disk = FALSE}}
+\item{allrowctr}{A list containing the row contributions after each data chunk is analyzed; returned only when \code{disk = FALSE}}
+\item{allcolctr}{A list containing the column contributions after each data chunk is analyzed; returned only when \code{disk = FALSE}}
+\item{allrowcor}{A list containing the row squared correlations produced after each data chunk is analyzed; returned only when \code{disk = FALSE}}
+\item{allcolcor}{A list containing the column squared correlations produced after each data chunk is analyzed; returned only when \code{disk = FALSE}}
 }
 \references{
 Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces with eigenvalue decomposition and singular value decomposition. \emph{Image and Vision Computing}, \emph{20}(13), 1009-1016. \cr \cr
@@ -51,28 +53,36 @@ Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-#Iris Species 
-data("iris", package = "datasets")
-X = scale(iris[,-5])
-res_iPCA = i_pca(data1 = X[1:50,], data2 = X[51:150,], nchunk = 2)
-#static plot
-plot(res_iPCA, animation = FALSE) 
+data("segmentationData", package = "caret")
+#standardize variables, keep 58 continuous attributes
+HCS = data.frame(scale(segmentationData[,-c(1:3)]))
+#abbreviate variable names for plotting
+names(HCS) = abbreviate(names(HCS), minlength = 5)
+#split the data into starting data and incoming data
+data1 = HCS[1:150, ]
+data2 = HCS[151:2019, ]
+#Incremental PCA on the HCS data set: the incoming data is splitted into twenty chunks
+res_iPCA = i_pca(data1, data2, nchunk = 20)
+#Static plots 
+plot(res_iPCA, animation = FALSE)
 \donttest{
-#\donttest is used here because the code calls the saveGIF function of the animation package 
-#which requires ImageMagick or GraphicsMagick to be installed in your system 
+#\donttest is used here because the code calls the saveLatex function of the animation package 
+#which requires ImageMagick or GraphicsMagick and 
+#Adobe Acrobat Reader to be installed in your system 
 #See help(im.convert) for details on the configuration of ImageMagick or GraphicsMagick.
-#Creates animated GIF movies for objects and variables
-plot(res_iPCA, animation = TRUE, frames = 10)
+#Creates animated plot in PDF for objects and variables
+plot(res_iPCA, animation = TRUE, frames = 10, movie_format = 'pdf')
 }
 
 #Daily Closing Prices of Major European Stock Indices, 1991-1998 
 data("EuStockMarkets", package = "datasets") 
 res_iPCA = i_pca(data1 = EuStockMarkets[1:50,], data2 = EuStockMarkets[51:1860,], nchunk = 5) 
 \donttest{
-#\donttest is used here because the code calls the saveGIF function of the animation package 
-#which requires ImageMagick or GraphicsMagick to be installed in your system 
+#\donttest is used here because the code calls the saveLatex function of the animation package 
+#which requires ImageMagick or GraphicsMagick and 
+#Adobe Acrobat Reader to be installed in your system 
 #See help(im.convert) for details on the configuration of ImageMagick or GraphicsMagick.
-#Creates animated GIF movies for objects and variables
-plot(res_iPCA, animation = TRUE, frames = 10)
+#Creates animated plot in PDF movies for objects and variables
+plot(res_iPCA, animation = TRUE, frames = 10, movie_format = 'pdf')
 }
 }

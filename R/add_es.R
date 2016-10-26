@@ -5,7 +5,6 @@ add_es <- function(eg,eg2,current_rank,orgn,ff=0,method=c("esm","isvd")){
     if (is.null(eg$m)) {
       #without orgn data is assumed as zero-mean
       m = dim(eg$u)[1]
-      print(m)
     } 
     else
     {

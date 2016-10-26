@@ -2,10 +2,9 @@ i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
   ## data1 the starting matrix; data2 the upcoming data
   ## nchunk: number of chunks to split data2
   ## disk: store output to use for graphics
-  
+  if(anyNA(data1)==TRUE | anyNA(data2)==TRUE ){stop("The data set should not contain missing data")}
   ## This is equivalent to PCA on the covariance matrix 
   ## (i.e. on mean centered data)
-  
   tdata2 = FALSE
   if(is.null(data2)==TRUE){
     tdata2 = TRUE #keep temp state of data2
@@ -66,7 +65,7 @@ i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
   #print(dist2.var)
   # mydist2.var=as.vector(crossprod(rep(1, nrow(data1)), as.matrix(cen_data1^2 * (1/n1))))
   
-  PC1.ctr = (PC1^2)%*% solve(diag(1/eig))
+  PC1.ctr = (PC1^2)%*% pseudoinverse(diag(1/eig))
   
   PC1.cor= PC1/sqrt(dist2.var)
   #print(PC1.cor[1:6,1:2])
@@ -139,9 +138,10 @@ i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
     eg12 = add_es(eg1, eg2, method="esm")
     n12=eg12$m
     m12=eg12$orgn
-    # print(n12)
-    n2=(nrow(mat.chu))
-    PCall = (1/sqrt(n12))* eg12$v%*%diag(eg12$d) 
+     
+     n2=(nrow(mat.chu))
+     
+     PCall = (1/sqrt(n12))* eg12$v%*%diag(eg12$d) 
     PCuall = eg12$u%*%diag(eg12$d) 
     # print(nrow(PCuall))
     
@@ -157,12 +157,9 @@ i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
     PCall.cor= (PCall / sqrt(dist2_12.var))^2
     
     PCuall.cor <- (PCuall^2)/dist2_12.ind
-    #  print(PCuall.cor[1:6,1:2])
-    # 
     PCuall.ctr <- t(t(PCuall^2 * (1/n12))/eig)*100
     
     # PCuall.ctr <- t(t(coord.ind^2 * row.w/sum(row.w))%*% diag(eig))
-    # print(PCuall.cor[1:6,1:2])
     PCall = sign_match(PC1, PCall)
     PCuall = sign_match(PCu1, PCuall)
     ########################################################################
@@ -202,17 +199,15 @@ i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
   
   out = list()
   # PCA scores and loadings
- # out$rowpcoords_start = PCu1[,c(1:dims)]
-#  out$colpcoords_start = PC1[,c(1:dims)]
   out$rowpcoord =  PCuall[,c(1:dims)]  
   out$colpcoord =  PCall[,c(1:dims)]
   out$eg=eg12
   # PCA eigenvalues
   sv = eg12$d/sqrt(nrows)
-  out$inertia_e= eg12$d^2/(sum(eg12$d^2))
   out$sv = sv[c(1:dims)] 
+  out$inertia.e= eg12$d^2/(sum(eg12$d^2))
   out$levelnames = collabs
- # out$rownames = rowlabs
+  # out$rownames = rowlabs
   # Row contributions and correlations
   out$rowctr=PCuall.ctr[,c(1:dims)]
   out$colctr=PCall.ctr[,c(1:dims)]
@@ -226,7 +221,9 @@ i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
     out$allrowcoord=allCoordsU
     out$allcolcoord=allCoords
     out$allrowctr=allctrU
+    out$allcolctr=allctr
     out$allrowcor=allcorU
+    out$allcolcor=allcor
   }
   class(out)="i_pca"
   return(out)

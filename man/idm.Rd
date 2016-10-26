@@ -12,8 +12,8 @@ Incremental Multiple Correspondence Analysis and Principal Component Analysis
 \tabular{ll}{
 Package: \tab idm\cr
 Type: \tab Package\cr
-Version: \tab 1.3.1\cr
-Date: \tab 2016-03-10\cr
+Version: \tab 1.7.1\cr
+Date: \tab 2016-11-01\cr
 License: \tab GPL (>=2)\cr
 }
 }

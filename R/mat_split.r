@@ -1,10 +1,11 @@
 mat_split<- function(mat,nchunk){
   mat.story=list()
   n=nrow(mat)
+  
   #case when input is number of chunks 
   if (length(nchunk) == 1) {
     nc=floor(n/nchunk)
-    seq.chu=seq(from=1,to=n,by=nc)
+    seq.chu=seq(from=1,to=n,by=nc-1)
     seq.chu[nchunk+1] = n
   }
   #case when input is specific block sizes

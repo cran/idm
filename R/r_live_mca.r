@@ -217,34 +217,34 @@ r_live_mca <-  function(data1, data2, nchunk, current_rank,ff = 0,disk = TRUE) {
   inertia.t <- (Q/(Q-1)) * (sum(inertia0) - ((J - Q) / Q^2))
   out = list()
   # out$colpcoordStart = PC1[,c(1:dims)]
-  out$colpcoord = PCall[,c(1:dims)]/sqrt(nchunk+1)
   #  out$rowpcoordStart = PCu1[,c(1:dims)]
+  out$rowpcoord = PCuall[,c(1:dims)]/sqrt(nchunk+1)
+  out$colpcoord = PCall[,c(1:dims)]/sqrt(nchunk+1)
   out$rowcoord = SRall[,c(1:dims)]#/sqrt(nchunk+1)
   out$colcoord = SCall[,c(1:dims)]
-  out$rowpcoord = PCuall[,c(1:dims)]/sqrt(nchunk+1)
-  out$levelnames=labs 
-  out$colctr=PCall.ctr[,c(1:dims)]
-  out$colcor=PCall.cor[,c(1:dims)]
-  out$rowctr=PCuall.ctr[,c(1:dims)]
-  out$rowcor=PCuall.cor[,c(1:dims)]
   out$sv=eg$d
-  #out$inertia_e=(eg$d[c(1:alldim)])^2/inertia_t
-  out$inertia_e <- inertia.adj / inertia.t
-  
-  if(disk==FALSE){
-    out$allrowcoords=allCoordsU
-    out$allcolcoords=allCoords
-    out$allcolctr=allctr
-    out$allrowctr=allctrU
-    out$allcolcor=allcor
-    out$allrowcor=allcorU
-  }
-  
+  out$inertia.e <- inertia.adj / inertia.t
+  out$levelnames=labs 
+  out$rowctr=PCuall.ctr[,c(1:dims)]
+  out$colctr=PCall.ctr[,c(1:dims)]
+  out$rowcor=PCuall.cor[,c(1:dims)]
+  out$colcor=PCall.cor[,c(1:dims)]
   out$rowmass = r
   out$colmass = c
-  out$ff = ff
+  # out$inertia_e=(eg$d[c(1:alldim)])^2/inertia.t
   out$nchunk = nchunk
   out$disk = disk
+  out$ff = ff
+  
+  if(disk==FALSE){
+    out$allrowcoord=allCoordsU
+    out$allcolcoord=allCoords
+    out$allrowctr=allctrU
+    out$allcolctr=allctr
+    out$allrowcor=allcorU
+    out$allcolcor=allcor
+  }
+  
   out
   
 }   

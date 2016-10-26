@@ -27,7 +27,10 @@ do_es <- function(data) {
   
   cen.mat = data - (orgn) %*% (oner)
   # print(t(cen.mat[1:5,1:6]))
-  svd.res = svd(cen.mat)
+ # svd.res = svd(cen.mat)
+#  print(dim(svd.res$u))
+  svd.res = fast.svd(cen.mat,0)
+#  print(dim(svd.res$u))
   u = svd.res$u
   d = svd.res$d
   v = svd.res$v

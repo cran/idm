@@ -1,4 +1,8 @@
-i_mca <- function(data1, data2=NULL,method=c("exact","live"), nchunk = 2,current_rank,ff = 0,disk=FALSE) {
+i_mca <- function(data1, data2=NULL,method=c("exact","live"), 
+                  nchunk = 2,current_rank,ff = 0,disk=FALSE) {
+  
+  if(anyNA(data1)==TRUE | anyNA(data2)==TRUE ){stop("The data set should not contain missing data")}
+  
   if(is.null(data2)==TRUE){
     out = mjca(data1,lambda="indicator",ret=TRUE)
     ##
@@ -6,13 +10,14 @@ i_mca <- function(data1, data2=NULL,method=c("exact","live"), nchunk = 2,current
     out$m = nrow(data1)
     out$rowmass = outZ$r
     out$orgn = colMeans(outZ$SZ[1:nrow(data1),])
+    
   }else{
     if(method=="exact"){
-      out=h_exact_mca(data1=data1, data2=data2,nchunk=nchunk, disk=disk)  
+      out = h_exact_mca(data1 = data1, data2 = data2,nchunk=nchunk, disk=disk)  
     }
     
     if(method=="live"){
-      out=r_live_mca(data1=data1, data2=data2,nchunk=nchunk, current_rank,ff=ff,disk=disk)  
+      out = r_live_mca(data1 = data1, data2 = data2,nchunk=nchunk, current_rank,ff=ff,disk=disk)  
     }
   }
   class(out)="i_mca"

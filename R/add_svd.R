@@ -8,7 +8,6 @@ add_svd <- function(eg,B,m,current_rank,orgn,ff = 0) {
   n = dim(B)[1]
   if (missing("current_rank")) {
     #full rank
-    print(current_rank)
     current_rank = c
   }
   #for convenience
@@ -26,9 +25,7 @@ add_svd <- function(eg,B,m,current_rank,orgn,ff = 0) {
     orgnb = colMeans(B) 
     #center data
     Bc = B - rep(orgnb, rep.int(nrow(B), ncol(B)))
-    #  print(head(Bc))
     #  Bc <- B - t(as.matrix(orgnb) %*% as.matrix(t(rep(1,n))))
-    #    print(head(Bc))
     #account for the variance of the mean
     Bc <- rbind(Bc,t(sqrt((n*m)/(n+m))*as.matrix((orgnb-orgn))))
     orgnc <- (ff*m*orgn + n*orgnb)/(n+ff*m)

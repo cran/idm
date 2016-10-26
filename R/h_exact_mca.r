@@ -60,8 +60,10 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
   
   eg1 = do_es(sZ1)
   r1 = r[1:n1]
-  PC1 = t(t(eg1$v / sqrt(c)) * as.vector((eg1$d)))
+#  PC1 = t(t(eg1$v / sqrt(c)) * as.vector((eg1$d)))
   PCu1 = t(t(eg1$u / sqrt(r1)) * as.vector((eg1$d)))
+  PC1 = (eg1$v / sqrt(c)) %*% diag(eg1$d)
+  
   PC1.ctr=eg1$v^2
   PC1.cor=(PC1^2)/apply(PC1^2,1,sum)
   PCu1.ctr = t(((1/n)*t(PCu1^2))*as.vector(1/(eg1$d)^2) )
@@ -115,7 +117,6 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
     
     n.mods.up = sapply(mods.up, length)   
     catDiff = n.mods1 - n.mods.up
-    
     if (any(catDiff) != 0) {
       fake.row = fake_row_make(mods1, mods.up, n.mods1, n.mods.up)
       mat.chu = rbind(mat.chu, fake.row)
@@ -125,7 +126,6 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
       tZ2 = transform_z(mat.chu, is.weight = T, is.exact=T,r = r, c = c)
       sZ2 = tZ2$SZ
     }
-    
     n2 = n.chu
     eg2 = do_es(sZ2)
     eg12 = add_es(eg1, eg2,method="esm")
@@ -138,7 +138,7 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
     }
     
     SCall = eg12$v / sqrt(c)
-    PCall = t(t(eg12$v / sqrt(c)) * as.vector((eg12$d)))
+    PCall = SCall %*% diag(eg12$d)
     r2 = r[1:(n1+n2)]
     SRall = eg12$u / sqrt(r2)
     PCuall = t(t(eg12$u / sqrt(r2)) * as.vector((eg12$d)))
@@ -191,36 +191,36 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
   alldim <- sum(sqrt(inertia0) >= 1/Q)
   inertia.adj  <- ((Q/(Q-1))^2 * (sqrt(inertia0)[1:alldim] - 1/Q)^2)
   inertia.t    <- (Q/(Q-1)) * (sum(inertia0) - ((J - Q) / Q^2))
-    
+  
   out = list()
-#  out$colpcoordStart = PC1[,c(1:dims)]
-  out$colcoord = SCall[,c(1:dims)]
-  out$colpcoord = PCall[,c(1:dims)]
- # out$rowpcoordStart = PCu1[,c(1:dims)]
-  out$rowcoord = SRall[,c(1:dims)]
   out$rowpcoord = PCuall[,c(1:dims)]
-  out$levelnames = labs 
-  out$colctr = PCall.ctr[,c(1:dims)]
-  out$colcor = PCall.cor[,c(1:dims)]
-  out$rowctr = PCuall.ctr[,c(1:dims)]
-  out$rowcor = PCuall.cor[,c(1:dims)]
+  out$colpcoord = PCall[,c(1:dims)]
+  out$rowcoord = SRall[,c(1:dims)]
+  out$colcoord = SCall[,c(1:dims)]
   out$sv = eg12$d[c(1:(J-Q))]
-  out$inertia_e = inertia.adj / inertia.t
-  
-  if(disk==FALSE){
-    out$allrowcoords=allCoordsU
-    out$allcolcoords=allCoords
-    out$allcolctr=allctr
-    out$allrowctr=allctrU
-    out$allcolcor=allcor
-    out$allrowcor=allcorU
-  }
-  
+  out$inertia.e = inertia.adj / inertia.t
+  out$levelnames = labs 
+  out$rowctr = PCuall.ctr[,c(1:dims)]
+  out$colctr = PCall.ctr[,c(1:dims)]
+  out$rowcor = PCuall.cor[,c(1:dims)]
+  out$colcor = PCall.cor[,c(1:dims)]
   out$rowmass = r
   out$colmass = c
+  
   # out$sZ1 = sZ1
   out$nchunk = nchunk
   out$disk = disk
   out$ff = 0
+  
+  if(disk==FALSE){
+    out$allrowcoord=allCoordsU
+    out$allcolcoord=allCoords
+    out$allrowctr=allctrU
+    out$allcolctr=allctr
+    out$allrowcor=allcorU
+    out$allcolcor=allcor
+  }
+  
+  
   out
 }

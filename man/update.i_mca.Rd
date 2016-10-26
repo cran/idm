@@ -4,7 +4,7 @@
 Updates a Multiple Correspondence Analysis solution
 }
 \description{
-This function updates the Multiple Correspondence Analysis (MCA) solution on the indicator matrix using the incremental method of Ross et al. (2008)
+This function updates the Multiple Correspondence Analysis (MCA) solution on the indicator matrix using the incremental method of Ross, Lim, Lin, & Yang (2008)
 }
 \usage{
 \method{update}{i_mca}(object, incdata, current_rank, ff = 0, nchunk = 1, ...)
@@ -14,27 +14,28 @@ This function updates the Multiple Correspondence Analysis (MCA) solution on the
 \item{object}{object of class 'i_mca'}
 \item{incdata}{Matrix of incoming data}
 \item{current_rank}{Rank of approximation; if empty then full rank is used}
-\item{ff}{Number between 0 and 1 indicating the "forgetting factor"}
-\item{nchunk}{Number of blocks processed up to that point; default is 1}
+\item{ff}{Number between 0 and 1 indicating the "forgetting factor" used to down-weight the contribution of earlier data blocks to the current solution. When \code{ff = 0} (default) no forgetting occurs}
+\item{nchunk}{Number of data blocks processed up to that point; default is 1}
 \item{...}{Further arguments passed to \code{\link{update}}}
 }
 
 \value{
-\item{indmat}{Indicator matrix} 
-\item{colcoord}{Column standard coordinates} 
-\item{rowcoord}{Row standard coordinates}     
-\item{colpcoord}{Column principal coordinates} 
 \item{rowpcoord}{Row principal coordinates}     
-\item{colctr}{Column contributions} 
-\item{colcor}{Column squared correlations} 
-\item{rowctr}{Row contributions}
-\item{rowcor}{Row squared correlations} 
+\item{colpcoord}{Column principal coordinates} 
+\item{rowcoord}{Row standard coordinates}     
+\item{colcoord}{Column standard coordinates} 
 \item{sv}{Singular values} 
+\item{inertia.e}{Percentages of explained (adjusted) inertia}
+\item{levelnames}{Attribute names} 
+\item{rowctr}{Row contributions}
+\item{colctr}{Column contributions} 
+\item{rowcor}{Row squared correlations} 
+\item{colcor}{Column squared correlations} 
 \item{rowmass}{Row masses} 
 \item{colmass}{Column masses} 
-\item{levelnames}{Attribute names} 
+\item{indmat}{Indicator matrix} 
 \item{m}{Number of cases processed up to this point} 
-\item{inertia_e}{Percentages of explained (adjusted) inertia}
+\item{ff}{A copy of \code{ff} in the return object}
 }
 
 \references{
@@ -47,7 +48,7 @@ Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association
 }
 
 \examples{
-data(women, package ="idm")
+data(women, package = "idm")
 dat = women[,c(1:4)]
 res_mca = i_mca(dat[1:300,])
 nchunk = seq(301,2107,258)

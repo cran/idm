@@ -1,6 +1,10 @@
 export(i_mca, i_pca, do_es, add_es)
-import(corpcor, dummies, ggplot2, animation, ca)
+import(ggplot2, animation, dummies)
 importFrom("stats", "cor", "lm")
+importFrom("ca","mjca")
+importFrom("corpcor","pseudoinverse")
+importFrom("corpcor","fast.svd")
+importFrom("ggrepel","geom_text_repel")
 importFrom("utils", "read.table", "write.table")
 
 S3method(plot, i_mca)

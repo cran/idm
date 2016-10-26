@@ -92,22 +92,20 @@ update.i_mca <-  function(object, incdata, current_rank, ff = 0, nchunk=1, ...) 
   inertia.adj <- ((Q/(Q-1))^2 * (sqrt(inertia0)[1:alldim] - 1/Q)^2)
   inertia.t <- (Q/(Q-1)) * (sum(inertia0) - ((J - Q) / Q^2))
   out = list()
-  out$sv = eg$d
-  #  out$inertia_e = (eg$d[c(1:alldim)])^2/inertia.t
-  out$inertia_e = inertia.adj / inertia.t
-  out$rowcoord = SRall[,c(1:dims)]  
   out$rowpcoord = PCuall[,c(1:dims)] /sqrt(nchunk)
-  # out$colpcoord = sqrt(SCall[,c(1:dims)]^2/2)
-  out$colcoord = SCall[,c(1:dims)]
   out$colpcoord = PCall[,c(1:dims)] /sqrt(nchunk)
-  out$colctr = PCall.ctr[,c(1:dims)]
+  out$rowcoord = SRall[,c(1:dims)]  
+  out$colcoord = SCall[,c(1:dims)]
+  out$sv = eg$d
+  out$inertia.e = inertia.adj / inertia.t
+  out$levelnames = labs
   out$rowctr = PCuall.ctr[,c(1:dims)]
-  out$colcor = PCall.cor[,c(1:dims)]
+  out$colctr = PCall.ctr[,c(1:dims)]
   out$rowcor = PCuall.cor[,c(1:dims)]
+  out$colcor = PCall.cor[,c(1:dims)]
   out$rowmass = r
   out$colmass = c
   out$indmat = tZ2$dZ
-  out$levelnames = labs
   out$orgn = eg$orgn
   out$m = n1 
   out$ff = ff

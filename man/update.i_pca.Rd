@@ -25,13 +25,13 @@ This function updates the Principal Component Analysis (PCA) solution on the cov
 \code{m} {Number of cases} \cr
 \code{d} {Eigenvalues} \cr
 \code{orgn} {Data mean} \cr}
-\item{inertia_e}{Percentages of explained variance}
+\item{inertia.e}{Percentages of explained variance}
 \item{sv}{Singular values}
-\item{levelnames}{Column names}
-\item{rowctr}{Row contributions}
+\item{levelnames}{Variable names}
 \item{rowcor}{Row squared correlations}
-\item{colctr}{Column contributions}
+\item{rowctr}{Row contributions}
 \item{colcor}{Column squared correlations}
+\item{colctr}{Column contributions}
 }
 \references{
 Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces with eigenvalue decomposition and singular value decomposition. \emph{Image and Vision Computing}, \emph{20}(13), 1009-1016. \cr \cr
@@ -41,12 +41,15 @@ Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association
 \seealso{\code{\link{update.i_mca}}, \code{\link{i_pca}}, \code{\link{i_mca}}, \code{\link{add_es}}}
 
 \examples{
-data(iris, package="datasets")
-dat = scale(iris[,-5])
-res_pca = i_pca(dat[1:50,-5])
-aa = seq(50,150,50)
-for (k in c(1:2)) {
-  res_pca = update(res_pca, dat[c((aa[k]+1):aa[k+1]),])
-} 
-plot(res_pca, animation = FALSE)  
+data(segmentationData, package = "caret")
+HCS = data.frame(scale(segmentationData[,-c(1:3)]))
+names(HCS) = abbreviate(names(HCS), minlength = 5)
+res_PCA = i_pca(HCS[1:200, ])
+aa = seq(from = 201, to = nrow(HCS), by = 200)
+aa[length(aa)] = nrow(HCS)
+for (k in c(1:(length(aa)-1))){
+     res_pca = update(res_PCA, HCS[c((aa[k]):(aa[k+1]-1)),])
+    }
+#Static plot
+plot(res_PCA, animation = FALSE)
 }
