@@ -8,7 +8,7 @@ This function implements two procedures for updating existing decomposition. Whe
 When \code{method = "isvd"} it adds the eigenspace of an incoming data block to an existing eigenspace using the block-wise incremental singular value decomposition (SVD) method described by Zha & Simon (1999), Levy and Lindenbaum (2000), Brand (2002) and Baker (2012). New data blocks are added row-wise. The procedure can optionally keep track of the data mean using the orgn argument, as described in Ross et al. (2008) and Iodice D'Enza & Markos (2015).
 }
 \usage{
-add_es(eg, eg2, current_rank, orgn, ff = 0, method = c("esm", "isvd"))
+add_es(eg, eg2, current_rank, ff = 0, method = c("esm", "isvd"))
 }
 
 \arguments{
@@ -27,8 +27,7 @@ add_es(eg, eg2, current_rank, orgn, ff = 0, method = c("esm", "isvd"))
 \code{d} {Eigenvalues} \cr
 \code{orgn} {Data mean} \cr
 }
-\item{current_rank}{(**)Rank of approximation; if empty then rank = 2}
-\item{orgn}{Data mean}
+\item{current_rank}{Rank of approximation; if empty then rank = full rank}
 \item{ff}{(**)Number between 0 and 1 indicating the forgetting factor used to down-weight the contribution of earlier data blocks to the current solution. When ff = 0 (default) no forgetting occurs}
 (*) for \code{method = "esm"} only; (**) for \code{method = "isvd"} only.
 }
@@ -50,8 +49,6 @@ Baker, C. G., Gallivan, K. A., & Van Dooren, P. (2012). Low-rank incremental met
 Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, \emph{25}(5), 1009-1022. 
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
 \code{\link{do_es}}, \code{\link{i_pca}}, \code{\link{i_mca}}, \code{\link{update.i_pca}}, \code{\link{update.i_mca}}}
 
@@ -66,7 +63,7 @@ eg = do_es(X[1:50, ])
 eg2 = do_es(X[c(51:150), ])
 #add the two eigenspaces keeping track of the data mean
 eg12 = add_es(method = "esm", eg, eg2)
-#similar to PCA on the covariance matrix of X (SVD of the mean-centered data)
+#equivalent to the SVD of the mean-centered data (svd(scale(X, center = TRUE,scale = FALSE)))
 
 ## Example 2 - block-wise incremental SVD with mean update, full rank (Ross et al., 2008)
 data("iris", package = "datasets")
@@ -74,8 +71,8 @@ data("iris", package = "datasets")
 X = iris[,-5]
 eg = do_es(X[1:50, ])
 #update the eigenspace of the remaining species to
-eg_new = add_es(method = "isvd",eg,data.matrix(X[c(51:150), ]),orgn = eg$orgn)
-#similar to PCA on the covariance matrix of X (SVD of the mean-centered data)
+eg_new = add_es(method = "isvd", eg, data.matrix(X[c(51:150), ]))
+#equivalent to the SVD of the mean-centered data (svd(scale(X, center = TRUE, scale = FALSE)))
 
 ##Example 3 - incremental SVD with mean update, 2d approximation (Ross et al., 2008)
 data("iris", package = "datasets")
@@ -83,17 +80,8 @@ data("iris", package = "datasets")
 X = iris[,-5]
 eg = do_es(X[1:50, ])
 #update the eigenspace of the remaining species to
-eg = add_es(method = "isvd",eg,data.matrix(X[c(51:150), ]),orgn = eg$orgn)
+eg = add_es(method = "isvd", eg, data.matrix(X[c(51:150), ]),current_rank = 2)
 #similar to PCA on the covariance matrix of X (SVD of the mean-centered data)
-
-##Example 4 - incremental SVD, full rank (Ross et al., 2008)
-data("iris", package = "datasets")
-#obtain the SVD of the first 50 Iris species
-X = iris[,-5]
-eg = svd(X[1:50,])
-#update the eigenspace of the remaining species to
-eg = add_es(method = "isvd", eg, data.matrix(X[c(51:150),]))
-#similar results to svd(X)
 
 }
 

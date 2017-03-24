@@ -7,15 +7,15 @@ Incremental Multiple Correspondence Analysis (MCA)
 This function computes the Multiple Correspondence Analysis (MCA) solution on the indicator matrix using two incremental methods described in Iodice D'Enza & Markos (2015)
 }
 \usage{
-i_mca(data1, data2, method=c("exact","live"), nchunk = 2, 
-current_rank, ff = 0, disk = FALSE)
+i_mca(data1, data2, method=c("exact","live"), current_rank, nchunk = 2, 
+ ff = 0, disk = FALSE)
 }
 \arguments{
   \item{data1}{Matrix or data frame of starting data or full data if data2 = NULL}
   \item{data2}{Matrix or data frame of incoming data}
   \item{method}{String specifying the type of implementation: \code{"exact"} or \code{"live"}. \code{"exact"} refers to the case when all the data is available from the start and dimension reduction is based on the method of Hall et al. (2002). \code{"live"} refers to the case when new data comes in as data flows and dimension reduction is based on the method of Ross et al. (2008). The main difference between the two approaches lies in the calculation of the column margins of the input matrix. For the \code{"exact"} approach, the analysis is based on the "global" margins, that is, the margins of the whole indicator matrix, which is available in advance. For the \code{"live"} approach, the whole matrix is unknown and the global margins are approximated by  the "local" margins, that is, the average margins of the data analysed insofar. A detailed description of the two implementations is provided in Iodice D' Enza & Markos (2015).}
+  \item{current_rank}{Rank of approximation or number of components to compute; if empty then full rank is used}
   \item{nchunk}{Number of incoming data chunks (equal splits of 'data2', \code{default = 2}) or a Vector with the row size of each incoming data chunk}
-  \item{current_rank}{Rank of approximation; if empty then full rank is used}
   \item{ff}{Number between 0 and 1 indicating the "forgetting factor" used to down-weight the contribution of earlier data blocks to the current solution. When \code{ff = 0} (default) no forgetting occurs; applicable only when \code{method ="live"}}
   \item{disk}{Logical indicating whether then output is saved to hard disk}
 }
@@ -26,7 +26,7 @@ current_rank, ff = 0, disk = FALSE)
 \item{rowcoord}{Row standard coordinates}     
 \item{colcoord}{Column standard coordinates}
 \item{sv}{Singular values}
-\item{inertia.e}{Percentages of explained (adjusted) inertia}
+\item{inertia.e}{Percentages of explained inertia}
 \item{levelnames}{Column labels}
 \item{rowctr}{Row contributions}
 \item{colctr}{Column contributions} 

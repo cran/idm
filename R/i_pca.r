@@ -1,10 +1,20 @@
-i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
+i_pca <- function(data1, data2 = NULL, current_rank, nchunk = 2, disk=FALSE) {
   ## data1 the starting matrix; data2 the upcoming data
   ## nchunk: number of chunks to split data2
   ## disk: store output to use for graphics
   if(anyNA(data1)==TRUE | anyNA(data2)==TRUE ){stop("The data set should not contain missing data")}
   ## This is equivalent to PCA on the covariance matrix 
   ## (i.e. on mean centered data)
+  
+  if(is.null(data2)==FALSE) {
+    if(dim(data1)[2] != dim(data2)[2]){stop("The data sets must have the same number of columns/variables")}
+  }
+  
+  if (missing("current_rank")) {
+    #current_rank = full rank
+    current_rank = dim(data1)[2]
+  }
+  
   tdata2 = FALSE
   if(is.null(data2)==TRUE){
     tdata2 = TRUE #keep temp state of data2
@@ -31,7 +41,7 @@ i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
   ncols = ncol(data1)
   nrows1 = nrow(data1)
   
-  dims=ncols
+  dims = current_rank #=ncols
   
   if ((length(nchunk) > 1 ) & (sum(nchunk) != nrow(data2))) {
     stop("\nchunk blocks do not match the size of 'data2'")
@@ -45,12 +55,13 @@ i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
   ########################################################################
   
   eg1 = do_es(data1)
-  PC1 = (1/sqrt(n1))*eg1$v%*%diag(eg1$d)
-  PCu1 = eg1$u%*%diag(eg1$d) 
-  #print(PC1[1:6,1:2])
+  
+  PC1 = (1/sqrt(n1))*eg1$v[,1:current_rank]%*%diag(eg1$d[1:current_rank])
+  PCu1 = eg1$u[,1:current_rank]%*%diag(eg1$d[1:current_rank]) 
+
   ## insert ctr comps
   
-  eig=(eg1$d * (1/sqrt(n1)))^2
+  eig=(eg1$d[1:current_rank] * (1/sqrt(n1)))^2
   #print(eig)
   
   #print(scale(data1,center=T,scale=F)[1:6,1:3])
@@ -104,7 +115,13 @@ i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
     allcor[[1]] = PC1.cor[,c(1:dims)]
   }
   
-  out.split = mat_split(data2, (nchunk))  
+  if (length(nchunk) == 1)
+  {
+    if(floor(nrow(data2)/nchunk) < 2){stop("There are blocks with zero rows. Please reduce the number of chunks.")}
+  } else {
+    if(any(nchunk < 1) == TRUE){stop("Block size should be greater than 1.")}
+  }
+  out.split = mat_split(data2, (nchunk)) 
   mat.story = out.split$splitMat
   
   #if block sizes are given, switch back to number
@@ -130,18 +147,22 @@ i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
     ########################################################################
     ########################################################################
     ########################################################################
-    nchu=nrow(mat.chu)
-    mat.chu=scale(mat.chu,center=F,scale=F)#*sqrt(nchu/(nchu-1))
+    #   if (dim(mat.chu)[1] < dim(mat.chu)[2]) {
+    #      mat.chu = t(mat.chu)
+    #    }
+    nchu = nrow(mat.chu)
+    
+    mat.chu = scale(mat.chu,center=F,scale=F)#*sqrt(nchu/(nchu-1))
     sum_sq_dchu = apply(mat.chu^2,2,sum)
     eg2 = do_es(mat.chu)
     
-    eg12 = add_es(eg1, eg2, method="esm")
+    eg12 = add_es(eg1, eg2, method="esm", current_rank)
     n12=eg12$m
     m12=eg12$orgn
-     
-     n2=(nrow(mat.chu))
-     
-     PCall = (1/sqrt(n12))* eg12$v%*%diag(eg12$d) 
+    
+    n2=(nrow(mat.chu))
+    
+    PCall = (1/sqrt(n12))* eg12$v%*%diag(eg12$d) 
     PCuall = eg12$u%*%diag(eg12$d) 
     # print(nrow(PCuall))
     
@@ -153,7 +174,6 @@ i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
     sum_sq_d12=sum_sq_d1+sum_sq_dchu
     dist2_12.var = as.vector((1/n12)*((sum_sq_d12)-n12* m12^2))
     PCall.ctr = t(t(PCall^2)/eig)*100
-    
     PCall.cor= (PCall / sqrt(dist2_12.var))^2
     
     PCuall.cor <- (PCuall^2)/dist2_12.ind
@@ -165,7 +185,6 @@ i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
     ########################################################################
     ########################################################################
     ########################################################################
-    
     if(disk==FALSE){      
       allCoords[[q+1]]=PCall[,c(1:dims)]
       allCoordsU[[q+1]]=PCuall[,c(1:dims)]
@@ -204,8 +223,12 @@ i_pca <- function(data1, data2 = NULL, nchunk = 2, disk=FALSE) {
   out$eg=eg12
   # PCA eigenvalues
   sv = eg12$d/sqrt(nrows)
-  out$sv = sv[c(1:dims)] 
-  out$inertia.e= eg12$d^2/(sum(eg12$d^2))
+  out$sv = sv[c(1:dims)]
+  if (current_rank == ncols) {
+    out$inertia.e= eg12$d^2/(sum(eg12$d^2))
+  } else {
+    out$inertia.e= sv^2/ncols 
+  }
   out$levelnames = collabs
   # out$rownames = rowlabs
   # Row contributions and correlations

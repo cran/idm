@@ -7,15 +7,14 @@ Updates a Multiple Correspondence Analysis solution
 This function updates the Multiple Correspondence Analysis (MCA) solution on the indicator matrix using the incremental method of Ross, Lim, Lin, & Yang (2008)
 }
 \usage{
-\method{update}{i_mca}(object, incdata, current_rank, ff = 0, nchunk = 1, ...)
+\method{update}{i_mca}(object, incdata, current_rank, ff = 0, ...)
 }
 
 \arguments{
 \item{object}{object of class 'i_mca'}
 \item{incdata}{Matrix of incoming data}
-\item{current_rank}{Rank of approximation; if empty then full rank is used}
+\item{current_rank}{Rank of approximation or number of components to compute; if empty then full rank is used}
 \item{ff}{Number between 0 and 1 indicating the "forgetting factor" used to down-weight the contribution of earlier data blocks to the current solution. When \code{ff = 0} (default) no forgetting occurs}
-\item{nchunk}{Number of data blocks processed up to that point; default is 1}
 \item{...}{Further arguments passed to \code{\link{update}}}
 }
 
@@ -25,7 +24,7 @@ This function updates the Multiple Correspondence Analysis (MCA) solution on the
 \item{rowcoord}{Row standard coordinates}     
 \item{colcoord}{Column standard coordinates} 
 \item{sv}{Singular values} 
-\item{inertia.e}{Percentages of explained (adjusted) inertia}
+\item{inertia.e}{Percentages of explained inertia}
 \item{levelnames}{Attribute names} 
 \item{rowctr}{Row contributions}
 \item{colctr}{Column contributions} 
@@ -50,11 +49,12 @@ Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association
 \examples{
 data(women, package = "idm")
 dat = women[,c(1:4)]
-res_mca = i_mca(dat[1:300,])
-nchunk = seq(301,2107,258)
-for (k in c(1:(length(nchunk)-1)))
+res_MCA = i_mca(dat[1:300,])
+aa = seq(from = 301, to = nrow(women), by = 200)
+aa[length(aa)] = nrow(dat)+1
+for (k in c(1:(length(aa)-1)))
 {
-  res_mca = update(res_mca,dat[c((nchunk[k]+1):nchunk[k+1]),],nchunk=k+1)
+  res_MCA = update(res_MCA,dat[c((aa[k]):(aa[k+1]-1)),])
 }
-plot(res_mca, what=c(FALSE, TRUE), animation = FALSE)
+plot(res_MCA, what = c(FALSE, TRUE), animation = FALSE)
 }

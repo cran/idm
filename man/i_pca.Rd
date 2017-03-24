@@ -7,12 +7,13 @@ Incremental Principal Component Analysis (PCA)
 This function computes the Principal Component Analysis (PCA) solution on the covariance matrix using the incremental method of Hall, Marshall & Martin (2002).
 }
 \usage{
-i_pca(data1, data2, nchunk = 2, disk = FALSE)
+i_pca(data1, data2, current_rank, nchunk = 2, disk = FALSE)
 }
 \arguments{
   \item{data1}{Matrix or data frame of starting data, or full data if data2 = NULL}
   \item{data2}{Matrix or data frame of incoming data; omitted when full data is given in data1}
-  \item{nchunk}{Number of incoming data chunks (equal splits of 'data2') or a Vector with the row size of each incoming data chunk}
+  \item{current_rank}{Rank of approximation or number of components to compute; if empty then full rank is used}
+  \item{nchunk}{Number of incoming data chunks (equal splits of 'data2', \code{default = 2}) or a Vector with the row size of each incoming data chunk}
 \item{disk}{Logical indicating whether then output is saved to hard disk}
 }
 
@@ -46,23 +47,22 @@ Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces 
 Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, \emph{25}(5), 1009-1022. 
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
 \code{\link{update.i_pca}}, \code{\link{i_mca}}, \code{\link{update.i_mca}}, \code{\link{add_es}}
-%% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
 data("segmentationData", package = "caret")
-#standardize variables, keep 58 continuous attributes
+#center and standardize variables, keep 58 continuous attributes
 HCS = data.frame(scale(segmentationData[,-c(1:3)]))
 #abbreviate variable names for plotting
 names(HCS) = abbreviate(names(HCS), minlength = 5)
 #split the data into starting data and incoming data
 data1 = HCS[1:150, ]
 data2 = HCS[151:2019, ]
-#Incremental PCA on the HCS data set: the incoming data is splitted into twenty chunks
-res_iPCA = i_pca(data1, data2, nchunk = 20)
+#Incremental PCA on the HCS data set: the incoming data is 
+#splitted into twenty chunks; the first 5 components/dimensions 
+#are computed in each update
+res_iPCA = i_pca(data1, data2, current_rank = 5, nchunk = 20)
 #Static plots 
 plot(res_iPCA, animation = FALSE)
 \donttest{

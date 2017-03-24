@@ -1,4 +1,5 @@
-update.i_mca <-  function(object, incdata, current_rank, ff = 0, nchunk=1, ...) {
+update.i_mca <-  function(object, incdata, current_rank, ff = 0,  ...) {
+  #Fixed and updated 23 Mar 2017
   eg = list()
   # ff = 1 - ff
   data <- data.frame(lapply(data.frame(incdata), factor))
@@ -8,6 +9,7 @@ update.i_mca <-  function(object, incdata, current_rank, ff = 0, nchunk=1, ...) 
     mods1=split(t(mods1),colnames(mods1))
   } 
   
+  nchunk=1 #check i_mca calculation of row/col principal coords to see why it's needed
   
   Q = ncol(incdata)
   n1 = object$m 
@@ -69,6 +71,7 @@ update.i_mca <-  function(object, incdata, current_rank, ff = 0, nchunk=1, ...) 
   #update row principal coordinates
   PCuall <- SRall[,c(1:current_rank)] %*% diag(as.vector((eg$d)))
   #PCuall <- Z %*% as.matrix(SCall) * Q^(-1)
+  
   n1 = n12
   c = c12
   r = r12
@@ -82,22 +85,26 @@ update.i_mca <-  function(object, incdata, current_rank, ff = 0, nchunk=1, ...) 
   
   #### Inertia Percentages, COR, CTR are approximate #05.02.2016
   
-  #calculates adjusted inertia
-  J = length(eg$d) ###this should be calculated somewhat else
-  #get (almost) same eigenvalues with exact
-  dd = eg$d/sqrt(nchunk)
+  #calculates  inertia
+  nd.max = ncol(tZ2$SZ)-Q
+  eg$d = eg$d/sqrt(nchunk+1)
+  if (current_rank == nd.max) {
+    inertia0    <- eg$d[1:nd.max]^2
+    inertia.t   <- nd.max/Q
+    inertia.e   <- inertia0 / inertia.t
+  } else {
+    inertia0    <- eg$d[1:current_rank]^2
+    inertia.t   <- nd.max/Q
+    inertia.e   <- inertia0 / inertia.t
+  }
   
-  inertia0 = dd^4
-  alldim <- sum(sqrt(inertia0) >= 1/Q)
-  inertia.adj <- ((Q/(Q-1))^2 * (sqrt(inertia0)[1:alldim] - 1/Q)^2)
-  inertia.t <- (Q/(Q-1)) * (sum(inertia0) - ((J - Q) / Q^2))
   out = list()
-  out$rowpcoord = PCuall[,c(1:dims)] /sqrt(nchunk)
-  out$colpcoord = PCall[,c(1:dims)] /sqrt(nchunk)
+  out$rowpcoord = PCuall[,c(1:dims)]/sqrt(nchunk+1) #/sqrt(nchunk)
+  out$colpcoord = PCall[,c(1:dims)]/sqrt(nchunk+1) #/sqrt(nchunk)
   out$rowcoord = SRall[,c(1:dims)]  
   out$colcoord = SCall[,c(1:dims)]
   out$sv = eg$d
-  out$inertia.e = inertia.adj / inertia.t
+  out$inertia.e = inertia.e #inertia.adj / inertia.t
   out$levelnames = labs
   out$rowctr = PCuall.ctr[,c(1:dims)]
   out$colctr = PCall.ctr[,c(1:dims)]

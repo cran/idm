@@ -1,5 +1,5 @@
 do_es <- function(data) {
- # require("corpcor")
+  # require("corpcor")
   # data: data matrix
   out = list()
   m = nrow(data)  ## number of rows
@@ -27,18 +27,23 @@ do_es <- function(data) {
   
   cen.mat = data - (orgn) %*% (oner)
   # print(t(cen.mat[1:5,1:6]))
- # svd.res = svd(cen.mat)
-#  print(dim(svd.res$u))
+  # svd.res = svd(cen.mat)
+  #  print(dim(svd.res$u))
+  
   svd.res = fast.svd(cen.mat,0)
-#  print(dim(svd.res$u))
   u = svd.res$u
   d = svd.res$d
   v = svd.res$v
-  #  out = list()
+#  print(length(d))
+  #Fix: When objs < vars then current_rank changes and u,d,v are filled with zeros
+  if (nrow(data) > ncol(u)) {
+    u = cbind(u,matrix(0,nrow(u),nrow(data)-ncol(u)))
+    d = c(d,rep(0,nrow(data)-length(d)))
+    v = cbind(v,matrix(0,nrow(v),nrow(data)-ncol(v)))
+  }
+  
   out$v = u
-  #out$cen.mat = cen.mat
-  #    }
-  #out=list()
+
   out$m = m
   out$orgn = orgn
   out$u = v

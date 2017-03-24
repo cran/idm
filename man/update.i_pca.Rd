@@ -7,12 +7,13 @@ Updates a Principal Component Analysis solution
 This function updates the Principal Component Analysis (PCA) solution on the covariance matrix using the incremental method of Hall, Marshall & Martin (2002)
 }
 \usage{
-\method{update}{i_pca}(object, incdata, ...)
+\method{update}{i_pca}(object, incdata, current_rank, ...)
 }
 
 \arguments{
 \item{object}{object of class 'i_pca'}
 \item{incdata}{matrix of incoming data}
+\item{current_rank}{Rank of approximation or number of components to compute; if empty then full rank is used}
 \item{...}{Further arguments passed to \code{\link{update}}}
 }
 
@@ -46,9 +47,9 @@ HCS = data.frame(scale(segmentationData[,-c(1:3)]))
 names(HCS) = abbreviate(names(HCS), minlength = 5)
 res_PCA = i_pca(HCS[1:200, ])
 aa = seq(from = 201, to = nrow(HCS), by = 200)
-aa[length(aa)] = nrow(HCS)
+aa[length(aa)] = nrow(HCS)+1
 for (k in c(1:(length(aa)-1))){
-     res_pca = update(res_PCA, HCS[c((aa[k]):(aa[k+1]-1)),])
+     res_PCA = update(res_PCA, HCS[c((aa[k]):(aa[k+1]-1)),])
     }
 #Static plot
 plot(res_PCA, animation = FALSE)

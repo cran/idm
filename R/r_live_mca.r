@@ -1,4 +1,4 @@
-r_live_mca <-  function(data1, data2, nchunk, current_rank,ff = 0,disk = TRUE) {
+r_live_mca <-  function(data1, data2, current_rank, nchunk, ff = 0,disk = TRUE) {
   
   if(disk==TRUE){
     suppressWarnings(dir.create("./PCstory"))
@@ -145,8 +145,8 @@ r_live_mca <-  function(data1, data2, nchunk, current_rank,ff = 0,disk = TRUE) {
     r12 = rep(1/n12,n12)
     #   sZ2 = sZ2 - rep(eg$orgn, rep.int(nrow(sZ2), ncol(sZ2)))
     
-    eg = add_es(eg,sZ2,current_rank,ff=ff,method="isvd")
-    #eg,eg2,current_rank,orgn,ff = 0,method=c("esm","isvd")
+    eg = add_es(eg, sZ2, current_rank=current_rank, ff=ff, method="isvd")
+
     ### coordinate computation
     ## column computation (modalities)
     if (q > 1) {
@@ -163,7 +163,7 @@ r_live_mca <-  function(data1, data2, nchunk, current_rank,ff = 0,disk = TRUE) {
     #update row standard coordinates
     SRall <- (eg$u / sqrt(r12))
     #update row principal coordinates
-    PCuall <- (eg$u / sqrt(r12)) %*% diag(as.vector((eg$d[1:current_rank])))
+    PCuall <- SRall %*% diag(as.vector((eg$d[1:current_rank])))
     #  PCuall <- Z %*% as.matrix(SCall) * Q^(-1)
     
     n1 = n12
@@ -207,23 +207,32 @@ r_live_mca <-  function(data1, data2, nchunk, current_rank,ff = 0,disk = TRUE) {
     }
   }
   
-  #calculates adjusted inertia
-  J = length(eg$d) ###this should be calculated somehat else
-  #get (almost) same eigenvalues with exact
-  dd = eg$d/sqrt(nchunk+1)
-  inertia0 = dd^4
-  alldim <- sum(sqrt(inertia0) >= 1/Q)
-  inertia.adj <- ((Q/(Q-1))^2 * (sqrt(inertia0)[1:alldim] - 1/Q)^2)
-  inertia.t <- (Q/(Q-1)) * (sum(inertia0) - ((J - Q) / Q^2))
+  #calculates inertia
+  nd.max = ncol(tZ1$SZ)-Q
+  eg$d = eg$d/sqrt(nchunk+1)
+  if (current_rank == nd.max) {
+    inertia0    <- eg$d[1:nd.max]^2
+    inertia.t   <- nd.max/Q
+    inertia.e   <- inertia0 / inertia.t
+    # adjusted inertia
+    # J = ncol(tZ1$SZ)
+    # inertia0 = eg12$d[1:(J-Q)]^4
+    # alldim <- sum(sqrt(inertia0) >= 1/Q)
+    # inertia.adj  <- ((Q/(Q-1))^2 * (sqrt(inertia0)[1:alldim] - 1/Q)^2)
+    # inertia.t    <- (Q/(Q-1)) * (sum(inertia0) - ((J - Q) / Q^2))
+  } else {
+    inertia0    <- eg$d[1:current_rank]^2
+    inertia.t   <- nd.max/Q
+    inertia.e   <- inertia0 / inertia.t
+  }
+  
   out = list()
-  # out$colpcoordStart = PC1[,c(1:dims)]
-  #  out$rowpcoordStart = PCu1[,c(1:dims)]
   out$rowpcoord = PCuall[,c(1:dims)]/sqrt(nchunk+1)
   out$colpcoord = PCall[,c(1:dims)]/sqrt(nchunk+1)
-  out$rowcoord = SRall[,c(1:dims)]#/sqrt(nchunk+1)
+  out$rowcoord = SRall[,c(1:dims)]
   out$colcoord = SCall[,c(1:dims)]
   out$sv=eg$d
-  out$inertia.e <- inertia.adj / inertia.t
+  out$inertia.e=inertia.e #inertia.adj / inertia.t
   out$levelnames=labs 
   out$rowctr=PCuall.ctr[,c(1:dims)]
   out$colctr=PCall.ctr[,c(1:dims)]

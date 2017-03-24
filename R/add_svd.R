@@ -1,4 +1,4 @@
-add_svd <- function(eg,B,m,current_rank,orgn,ff = 0) {
+add_svd <- function(eg,B,m,current_rank,ff = 0) {
   out = list()
   #new data block
   B = data.matrix(B) 
@@ -16,56 +16,43 @@ add_svd <- function(eg,B,m,current_rank,orgn,ff = 0) {
   Pk = eg$u[,1:current_rank]
   Sk = eg$d[1:current_rank]
   Qk = eg$v[,1:current_rank]
-  if (missing("orgn")) {
-    #without orgn data is assumed as zero-mean
-    Bc = B
-    t = 0
-  } else {
-    #mean update
-    orgnb = colMeans(B) 
-    #center data
-    Bc = B - rep(orgnb, rep.int(nrow(B), ncol(B)))
-    #  Bc <- B - t(as.matrix(orgnb) %*% as.matrix(t(rep(1,n))))
-    #account for the variance of the mean
-    Bc <- rbind(Bc,t(sqrt((n*m)/(n+m))*as.matrix((orgnb-orgn))))
-    orgnc <- (ff*m*orgn + n*orgnb)/(n+ff*m)
-    #indicates the extra row/col needed for the mean
-    t = 1
-    out$orgn <- orgnc
-  }
+  
+  
+  #mean calculation
+  orgn = eg$orgn
+  orgnb = colMeans(B) 
+  #center data
+  Bc = scale(B,center=TRUE,scale=FALSE)
+  #account for the variance of the mean
+  Bc <- rbind(Bc,t(sqrt((n*m)/(n+m))*as.matrix((orgnb-orgn))))
+  #mean update
+  orgnc <- (ff*m*orgn + n*orgnb)/(n+ff*m)
+  out$orgn <- orgnc
   #QR-decomposition of (I-Qk'Qk)B
+  
   qrstr = qr((diag(c) - Qk%*%t(Qk))%*%t(Bc))
-  Qt = qr.Q(qrstr)
-  L = qr.R(qrstr)
+  Qt = qr.Q(qrstr,complete=T)
+  L = qr.R(qrstr,complete=T)
   
   #Form middle matrix K
-  #fix this when k=1
+  #fix this when current_rank=1
   K = rbind(cbind(ff*diag(Sk),matrix(0,current_rank,c)),cbind(Bc%*%Qk,t(L)))
   #get svd of K
-  eg = fast.svd(K)
+  eg = fast.svd(K,0)
   #keep current_rank singular values and vectors
   Uk = eg$u[,1:current_rank]
   Sk = eg$d[1:current_rank]
   Vk = eg$v[,1:current_rank]
   #calculate U and V
   Vk = cbind(Qk,Qt)%*%Vk
-  Uk = rbind(cbind(Pk,matrix(0,m,n+t)),cbind(matrix(0,n,current_rank+t),diag(n)))%*%Uk
+  
+  #Fixed 24.02.17 during the industrial affiliates conference
+  # Uk = rbind(cbind(Pk,matrix(0,m,n+1)),cbind(matrix(0,n,current_rank+1),diag(n)))%*%Uk
+  Uk = rbind(cbind(Pk,matrix(0,m,n+1)),cbind(matrix(0,n,current_rank),cbind(diag(n),rep(0,n,1))))%*%Uk
   #update number of columns m processed so far
   m <- m + n
   #but the correct is 
   #  m <- ff*m + n
-  
-  #after thousands of updates you may need this to preserve orthogonality
-  #URQ = qr(Uk)
-  #UQ = qr.Q(URQ)
-  #UR = qr.R(URQ)
-  #VRQ= qr(Vk)
-  #VQ = qr.Q(VRQ)
-  #VR = qr.R(VRQ)
-  #egk <- fast.svd(UR %*% diag(Sk) %*% t(VR))
-  #Up = UQ %*% egk$u
-  #Vp = VQ %*% egk$v
-  #Sk = egk$d
   
   #output
   out$u <- Uk

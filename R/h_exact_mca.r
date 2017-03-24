@@ -1,11 +1,10 @@
-h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
+h_exact_mca <- function(data1, data2, current_rank, nchunk, disk = TRUE) {
   ## data1 the starting matrix; data2 the upcoming data
   ## is.update: states if there are one or more updates
   ## nchunk: number of chunks to split data2
-
+  
   ## This is equivalent to MCA on the indicator matrix 
   ## mjca(data,lambda="indicator")
- 
   if(disk==TRUE){
     suppressWarnings(dir.create("./PCstory"))
   }else{
@@ -52,18 +51,26 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
   tZ1 = transform_z(data1, is.weight = T,is.exact=T, r = r, c = c)
   
   sZ1 = tZ1$SZ
-  dims=ncol(tZ1$SZ) - Q
+  
+  if (missing("current_rank")) {
+    #current_rank = full rank
+    current_rank = ncol(tZ1$SZ) - Q
+  }
+  
+  dims=current_rank 
   
   if ((length(nchunk) > 1 ) & (sum(nchunk) != nrow(data2))) {
     stop("\n The overall size of given 'nchunk' blocks does not match the size of 'data2'")
   }
   
   eg1 = do_es(sZ1)
+  eg1$u = eg1$u[,1:current_rank]
+  eg1$d = eg1$d[1:current_rank]
+  eg1$v = eg1$v[,1:current_rank]
   r1 = r[1:n1]
-#  PC1 = t(t(eg1$v / sqrt(c)) * as.vector((eg1$d)))
+  #  PC1 = t(t(eg1$v / sqrt(c)) * as.vector((eg1$d)))
   PCu1 = t(t(eg1$u / sqrt(r1)) * as.vector((eg1$d)))
   PC1 = (eg1$v / sqrt(c)) %*% diag(eg1$d)
-  
   PC1.ctr=eg1$v^2
   PC1.cor=(PC1^2)/apply(PC1^2,1,sum)
   PCu1.ctr = t(((1/n)*t(PCu1^2))*as.vector(1/(eg1$d)^2) )
@@ -128,8 +135,8 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
     }
     n2 = n.chu
     eg2 = do_es(sZ2)
-    eg12 = add_es(eg1, eg2,method="esm")
     
+    eg12 = add_es(eg1, eg2, current_rank, method="esm")
     if (q > 1) {
       #######################
       PCu1 = PCuall
@@ -139,6 +146,7 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
     
     SCall = eg12$v / sqrt(c)
     PCall = SCall %*% diag(eg12$d)
+    
     r2 = r[1:(n1+n2)]
     SRall = eg12$u / sqrt(r2)
     PCuall = t(t(eg12$u / sqrt(r2)) * as.vector((eg12$d)))
@@ -147,7 +155,8 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
     PCuall = sign_match(PCu1, PCuall)
     
     PCall.ctr = eg12$v^2
-    PCall.cor = (PCall^2)/apply(PCall^2,1,sum)
+    PCall.cor = PCall^2 / apply(PCall^2, 1, sum)
+    
     PCuall.ctr = t(((1/n)*t(PCuall^2))*as.vector(1/(eg12$d)^2) )
     PCuall.cor = (PCuall^2)/apply(PCuall^2,1,sum)
     
@@ -184,21 +193,30 @@ h_exact_mca <- function(data1, data2,nchunk, disk = TRUE) {
     }
     
   }
-
-  #calculates adjusted inertia
-  J = length(eg12$d)
-  inertia0 = eg12$d[1:(J-Q)]^4
-  alldim <- sum(sqrt(inertia0) >= 1/Q)
-  inertia.adj  <- ((Q/(Q-1))^2 * (sqrt(inertia0)[1:alldim] - 1/Q)^2)
-  inertia.t    <- (Q/(Q-1)) * (sum(inertia0) - ((J - Q) / Q^2))
+  nd.max = ncol(tZ1$SZ)-Q
+  if (current_rank == nd.max) {
+    inertia0    <- eg12$d[1:nd.max]^2
+    inertia.t   <- sum(inertia0)
+    inertia.e   <- inertia0 / inertia.t
+    # adjusted inertia
+    # J = ncol(tZ1$SZ)
+    # inertia0 = eg12$d[1:(J-Q)]^4
+    # alldim <- sum(sqrt(inertia0) >= 1/Q)
+    # inertia.adj  <- ((Q/(Q-1))^2 * (sqrt(inertia0)[1:alldim] - 1/Q)^2)
+    # inertia.t    <- (Q/(Q-1)) * (sum(inertia0) - ((J - Q) / Q^2))
+  } else {
+    inertia0    <- eg12$d[1:current_rank]^2
+    inertia.t <- nd.max/Q
+    inertia.e   <- inertia0 / inertia.t
+  }
   
   out = list()
   out$rowpcoord = PCuall[,c(1:dims)]
   out$colpcoord = PCall[,c(1:dims)]
   out$rowcoord = SRall[,c(1:dims)]
   out$colcoord = SCall[,c(1:dims)]
-  out$sv = eg12$d[c(1:(J-Q))]
-  out$inertia.e = inertia.adj / inertia.t
+  out$sv = eg12$d[c(1:nd.max)]
+  out$inertia.e = inertia.e #inertia.adj / inertia.t 
   out$levelnames = labs 
   out$rowctr = PCuall.ctr[,c(1:dims)]
   out$colctr = PCall.ctr[,c(1:dims)]

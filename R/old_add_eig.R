@@ -7,7 +7,7 @@ add_eig <- function(m1, m2, current_rank) {
   m1$v=m1$v[,1:current_rank]
   m1$d=m1$d[1:current_rank]
   m2$u=m2$u[,1:current_rank]
-
+  
   m2$v=m2$v[,1:current_rank]
   m2$d=m2$d[1:current_rank]
   
