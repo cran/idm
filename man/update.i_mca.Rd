@@ -13,7 +13,7 @@ This function updates the Multiple Correspondence Analysis (MCA) solution on the
 \arguments{
 \item{object}{object of class 'i_mca'}
 \item{incdata}{Matrix of incoming data}
-\item{current_rank}{Rank of approximation or number of components to compute; if empty then full rank is used}
+\item{current_rank}{Rank of approximation or number of components to compute; if empty, the full rank is used}
 \item{ff}{Number between 0 and 1 indicating the "forgetting factor" used to down-weight the contribution of earlier data blocks to the current solution. When \code{ff = 0} (default) no forgetting occurs}
 \item{...}{Further arguments passed to \code{\link{update}}}
 }

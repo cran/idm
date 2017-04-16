@@ -1,67 +1,65 @@
-add_svd <- function(eg,B,m,current_rank,ff = 0) {
-  out = list()
-  #new data block
-  B = data.matrix(B) 
-  #columns (fixed)
-  c = dim(B)[2]
-  #num of new rows
-  n = dim(B)[1]
+add_svd <-  function(eg, B, m, current_rank, ff = 0) {
+  
+  B = t(B)
+  N = nrow(B)
+  n = ncol(B)
+  ff = 1 -ff
+  
   if (missing("current_rank")) {
     #full rank
-    current_rank = c
+    current_rank = N
   }
-  #for convenience
-  ff = 1 -ff
-  #get low-rank matrices
-  Pk = eg$u[,1:current_rank]
-  Sk = eg$d[1:current_rank]
-  Qk = eg$v[,1:current_rank]
   
-  
-  #mean calculation
   orgn = eg$orgn
-  orgnb = colMeans(B) 
+  U0 = eg$v[,1:current_rank]
+  D0 = eg$d[1:current_rank]  
+  V0 = eg$u[,1:current_rank]
+  orgnb = rowMeans(B) 
   #center data
-  Bc = scale(B,center=TRUE,scale=FALSE)
-  #account for the variance of the mean
-  Bc <- rbind(Bc,t(sqrt((n*m)/(n+m))*as.matrix((orgnb-orgn))))
+  B = B - as.matrix(orgnb) %*% as.matrix(t(rep(1,n)))
+  
+  B <- cbind(B,sqrt(n*m/(n+m))*as.matrix((orgnb-orgn)))
   #mean update
   orgnc <- (ff*m*orgn + n*orgnb)/(n+ff*m)
+  
+  B_proj = t(U0)%*%B 
+  B_res = B - U0%*%B_proj
+  qrstr = qr(B_res)
+  q = qr.Q(qrstr,complete=T)
+  Q = cbind(U0,q)
+  R = rbind(cbind(ff*diag(D0),B_proj),cbind(matrix(0,nrow(B),length(D0)),t(q)%*%B_res))
+  
+  eg12 = fast.svd(R, 0) 
+  
+  D = eg12$d[1:current_rank]
+  U = Q %*% eg12$u[, 1:current_rank]
+  eg12$v = eg12$v[,1:current_rank]
+  #these left eigenvectors are not exact
+  V = rbind(V0 %*% eg12$v[1:current_rank,],eg12$v[(current_rank+1):(dim(eg12$v)[1]-1),])   #Exploit structure to compute this fast  Vp = [ Vp ; tVp( current_rank+1:size(tVp,1), : ) ];
+  
+  m = n + ff*m
+  
+  #force_orthogonality
+  # qrUp = qr(U)
+  # UQ = qr.Q(qrUp)
+  # UR = qr.R(qrUp)
+  # qrVp = qr(V)
+  # VQ = qr.Q(qrVp)
+  # VR = qr.R(qrVp)
+  # # 
+  # eg = fast.svd(UR%*%diag(D)%*%t(VR),0)
+  # tUp = eg$u
+  # tSp = eg$d
+  # tVp = eg$v
+  # U = UQ %*% tUp
+  # V = VQ %*% tVp
+  # D = tSp
+  
+  out = list()
+  out$u <- V
+  out$d <- D
+  out$v <- U
+  out$m <- m
   out$orgn <- orgnc
-  #QR-decomposition of (I-Qk'Qk)B
-  
-  qrstr = qr((diag(c) - Qk%*%t(Qk))%*%t(Bc))
-  Qt = qr.Q(qrstr,complete=T)
-  L = qr.R(qrstr,complete=T)
-  
-  #Form middle matrix K
-  #fix this when current_rank=1
-  K = rbind(cbind(ff*diag(Sk),matrix(0,current_rank,c)),cbind(Bc%*%Qk,t(L)))
-  #get svd of K
-  eg = fast.svd(K,0)
-  #keep current_rank singular values and vectors
-  Uk = eg$u[,1:current_rank]
-  Sk = eg$d[1:current_rank]
-  Vk = eg$v[,1:current_rank]
-  #calculate U and V
-  Vk = cbind(Qk,Qt)%*%Vk
-  
-  #Fixed 24.02.17 during the industrial affiliates conference
-  # Uk = rbind(cbind(Pk,matrix(0,m,n+1)),cbind(matrix(0,n,current_rank+1),diag(n)))%*%Uk
-  Uk = rbind(cbind(Pk,matrix(0,m,n+1)),cbind(matrix(0,n,current_rank),cbind(diag(n),rep(0,n,1))))%*%Uk
-  #update number of columns m processed so far
-  m <- m + n
-  #but the correct is 
-  #  m <- ff*m + n
-  
-  #output
-  out$u <- Uk
-  out$d <- Sk
-  out$v <- Vk
-  out$m <- m 
-  
-  
   out
-  
 }
-

@@ -13,7 +13,7 @@ This function updates the Principal Component Analysis (PCA) solution on the cov
 \arguments{
 \item{object}{object of class 'i_pca'}
 \item{incdata}{matrix of incoming data}
-\item{current_rank}{Rank of approximation or number of components to compute; if empty then full rank is used}
+\item{current_rank}{Rank of approximation or number of components to compute; if empty, the full rank is used}
 \item{...}{Further arguments passed to \code{\link{update}}}
 }
 

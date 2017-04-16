@@ -12,7 +12,7 @@ i_pca(data1, data2, current_rank, nchunk = 2, disk = FALSE)
 \arguments{
   \item{data1}{Matrix or data frame of starting data, or full data if data2 = NULL}
   \item{data2}{Matrix or data frame of incoming data; omitted when full data is given in data1}
-  \item{current_rank}{Rank of approximation or number of components to compute; if empty then full rank is used}
+  \item{current_rank}{Rank of approximation or number of components to compute; if empty, the full rank is used}
   \item{nchunk}{Number of incoming data chunks (equal splits of 'data2', \code{default = 2}) or a Vector with the row size of each incoming data chunk}
 \item{disk}{Logical indicating whether then output is saved to hard disk}
 }

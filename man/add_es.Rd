@@ -27,7 +27,7 @@ add_es(eg, eg2, current_rank, ff = 0, method = c("esm", "isvd"))
 \code{d} {Eigenvalues} \cr
 \code{orgn} {Data mean} \cr
 }
-\item{current_rank}{Rank of approximation; if empty then rank = full rank}
+\item{current_rank}{Rank of approximation; if empty, the full rank is used}
 \item{ff}{(**)Number between 0 and 1 indicating the forgetting factor used to down-weight the contribution of earlier data blocks to the current solution. When ff = 0 (default) no forgetting occurs}
 (*) for \code{method = "esm"} only; (**) for \code{method = "isvd"} only.
 }
