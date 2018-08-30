@@ -1,8 +1,8 @@
 Package: idm
 Type: Package
 Title: Incremental Decomposition Methods
-Version: 1.8.1
-Date: 2017-04-16
+Version: 1.8.2
+Date: 2018-08-30
 Author: Alfonso Iodice D' Enza [aut], Angelos Markos [aut, cre], Davide
     Buttarazzi [ctb]
 Maintainer: Angelos Markos <amarkos@gmail.com>
@@ -16,5 +16,5 @@ Description: Incremental Multiple Correspondence Analysis and Principal
 License: GPL (>= 2)
 NeedsCompilation: no
 Repository: CRAN
-Packaged: 2017-04-16 08:47:08 UTC; amarkos
-Date/Publication: 2017-04-16 10:08:35 UTC
+Packaged: 2018-08-30 07:45:12 UTC; amarkos
+Date/Publication: 2018-08-30 08:10:15 UTC

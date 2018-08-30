@@ -47,6 +47,7 @@ Brand, M. (2002). Incremental singular value decomposition of uncertain data wit
 Ross, D. A., Lim, J., Lin, R. S., & Yang, M. H. (2008). Incremental learning for robust visual tracking. \emph{International Journal of Computer Vision}, \emph{77}(1-3), 125-141.\cr \cr
 Baker, C. G., Gallivan, K. A., & Van Dooren, P. (2012). Low-rank incremental methods for computing dominant singular subspaces. \emph{Linear Algebra and its Applications}, \emph{436}(8), 2866-2888.\cr \cr
 Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, \emph{25}(5), 1009-1022. 
+Iodice D'Enza, A., Markos, A., & Buttarazzi, D. (2018). The {idm} Package: Incremental Decomposition Methods in {R}. \emph{Journal of Statistical Software, Code Snippets}, \emph{86}(4), 1--24. DOI: 10.18637/jss.v086.c04.
 }
 
 \seealso{

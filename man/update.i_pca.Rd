@@ -35,9 +35,9 @@ This function updates the Principal Component Analysis (PCA) solution on the cov
 \item{colctr}{Column contributions}
 }
 \references{
-Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces with eigenvalue decomposition and singular value decomposition. \emph{Image and Vision Computing}, \emph{20}(13), 1009-1016. \cr \cr
-Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, \emph{25}(5), 1009-1022. 
-}
+Hall, P., Marshall, D., & Martin, R. (2002). Adding and subtracting eigenspaces with eigenvalue decomposition and singular value decomposition. \emph{Image and Vision Computing}, \emph{20}(13), 1009-1016.\cr \cr
+Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, \emph{25}(5), 1009--1022. \cr \cr
+Iodice D'Enza, A., Markos, A., & Buttarazzi, D. (2018). The {idm} Package: Incremental Decomposition Methods in {R}. \emph{Journal of Statistical Software, Code Snippets}, \emph{86}(4), 1--24. DOI: 10.18637/jss.v086.c04.}
 
 \seealso{\code{\link{update.i_mca}}, \code{\link{i_pca}}, \code{\link{i_mca}}, \code{\link{add_es}}}
 

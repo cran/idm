@@ -1,0 +1,21 @@
+bibentry(bibtype = "Article",
+  title        = "The {idm} Package: Incremental Decomposition Methods in {R}",
+  author       = c(person(given = c("Alfonso", "Iodice"),
+                          family = "D'Enza",
+                          email = "iodicede@unicas.it"),
+                   person(given = "Angelos",
+                          family = "Markos",
+                          email = "amarkos@eled.duth.gr"),
+                   person(given = "Davide",
+                          family = "Buttarazzi",
+                          email = "d.buttarazzi@unicas.it")),
+  journal      = "Journal of Statistical Software, Code Snippets",
+  year         = "2018",
+  volume       = "86",
+  number       = "4",
+  pages        = "1--24",
+  doi          = "10.18637/jss.v086.c04",
+
+  header       = "To cite idm in publications use:"
+)
+

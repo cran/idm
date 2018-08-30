@@ -21,7 +21,8 @@ the number of followers each user had, was also included in the dataset
 }
 
 \references{
-Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, \emph{25}(5), 1009-1022.
+Iodice D' Enza, A., & Markos, A. (2015). Low-dimensional tracking of association structures in categorical data, \emph{Statistics and Computing}, \emph{25}(5), 1009-1022. \cr \cr
+Iodice D'Enza, A., Markos, A., & Buttarazzi, D. (2018). The {idm} Package: Incremental Decomposition Methods in {R}. \emph{Journal of Statistical Software, Code Snippets}, \emph{86}(4), 1--24. DOI: 10.18637/jss.v086.c04.
 }
 \examples{
 data(tweet)
