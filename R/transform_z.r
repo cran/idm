@@ -1,5 +1,5 @@
 transform_z <- function(data,is.weight=TRUE,is.exact=TRUE,r=1,c=1){
-  
+
   ## function that transforms a categorical data matrix in a standardized residual matrix accroding to 
   ## the weights in D1 e D2
  # require(dummies)
@@ -7,8 +7,11 @@ transform_z <- function(data,is.weight=TRUE,is.exact=TRUE,r=1,c=1){
   
   data=data.frame(data)
   data=data.frame(lapply(data,as.factor))
-  ddZ=as.matrix(dummy.data.frame((data),drop=F))
+  ddZ = as.matrix(tab.disjonctif(data))
+#  ddZ=as.matrix(dummy.data.frame((data),drop=F))
 
+  
+  
   out$dZ=ddZ
   out$J=ncol(out$dZ)
   out$Q=ncol(data)
@@ -56,4 +59,7 @@ transform_z <- function(data,is.weight=TRUE,is.exact=TRUE,r=1,c=1){
   
   out$SZ=SZ
   out
+  
+  
 }
+

@@ -1,5 +1,5 @@
 export(i_mca, i_pca, do_es, add_es)
-import(ggplot2, animation, dummies)
+import(ggplot2, animation)
 importFrom("stats", "cor", "lm")
 importFrom("ca","mjca")
 importFrom("corpcor","pseudoinverse")

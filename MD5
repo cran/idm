@@ -1,5 +1,5 @@
-c92b6309fe836301182b0337756f3c3d *DESCRIPTION
-3743c528fc2398eeab2e5f695c0f4ee5 *NAMESPACE
+898bc4c4cae43d098ed508d208eec6ac *DESCRIPTION
+f15dddff8ecfbc1b91d1317bd06360f3 *NAMESPACE
 7d738fff2255afd7e168d71725d1c879 *R/active_zoom.R
 6d68d99fbbeda3ad3640f85d80755401 *R/add_eig.r
 64e4067db8f64805e420a0c99a2c82ae *R/add_es.R
@@ -23,7 +23,8 @@ cc413012bca0ee545bebaa9b8a591498 *R/plot_fun.R
 8a37e9ba29bbe80c144ae19e4680664a *R/r_live_mca.r
 ae8b6e1bef14a9a0b3bff7172064f2d7 *R/sign_match.r
 344922a04b658f8f15c114faaf625f21 *R/static_plot.r
-1a601eda6b660fbefd36ab87807a3c16 *R/transform_z.r
+311c5ac77c89b3127b748225f879b300 *R/tab.disjonctif.r
+78b99b70e4d5c2a1c72678db885a02e8 *R/transform_z.r
 ec0e1e65db9a69072dc22e4ba0a4693d *R/update.i_mca.R
 77f85108a5eb8611f01c6abc6ed07ea0 *R/update.i_pca.R
 06ef571436d699dd32ffdbf68fdc939b *data/enron.rda
